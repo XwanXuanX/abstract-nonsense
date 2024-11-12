@@ -15,25 +15,31 @@ signed main(){
     sort(a.begin(), a.end());
     
     double bmx = (double)a[n];
-    auto calc=[&](double bmx)->double{
-        return bmx * n + min((double)bmx / 2, (double)a.front()) * n;
+    // auto calc=[&](double bmx)->double{
+    //     return bmx * n + min((double)bmx / 2, (double)a.front()) * n;
+    // };
+    auto check=[&](double x)->bool{
+        for(int i=0;i<n;++i)
+            if(x>a[i] || 2*x>a[i+n])
+                return false;
+        if(3 * n * x > w)
+            return false;
+        return true;
     };
 
     // using binary search to find the maximum bmx
     /// the problem is some of the cases are invalid
     /// the right bound should be a[0] * 2
-    double left=0, right=min(bmx, (double)a[0] * 2);
-    double ans=0;
-    while(left <= right){
+    double left=0, right=w;
+    for(int i=0;i<100;++i){
         double mid=(left + right) / 2;
-        double tot=calc(mid);
-        if(tot > w)
-            right = mid - 0.000000001;
+        if(!check(mid))
+            right = mid;
         else
-            left = mid + 0.000000001, ans=max(ans, tot);
+            left = mid;
     }
 
-    cout<<ans<<endl;
+    cout<<3 * n * left<<endl;
     return 0;
 }
 
