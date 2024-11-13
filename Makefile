@@ -1,3 +1,3 @@
 # remove all .bin files
 clean:
-	rm *.bin
+	rm ./archive/*.bin
