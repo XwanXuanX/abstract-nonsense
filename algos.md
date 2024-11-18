@@ -29,3 +29,7 @@
 * [Divisibility rules](https://en.wikipedia.org/wiki/Divisibility_rule)
 
 * [Prime factorization & Generating all divisors](https://www.geeksforgeeks.org/generating-all-divisors-of-a-number-using-its-prime-factorization/)
+
+* [Nth Fibonacci number: Fast Doubling Method](https://cp-algorithms.com/algebra/fibonacci-numbers.html#fast-doubling-method)
+
+* [Modular arithmetic: Modular Inverse using Binary Exponentiation](https://cp-algorithms.com/algebra/module-inverse.html#finding-the-modular-inverse-using-binary-exponentiation)
