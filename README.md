@@ -1,4 +1,4 @@
-# Algorithm Collections
+# Algorithm Collection
 
 * [Primes generating algorithms: Trial Division, Sieve of Eratosthenes, Dijkstra's Approach](https://www.youtube.com/watch?v=fwxjMKBMR7s)
 
@@ -33,3 +33,19 @@
 * [Nth Fibonacci number: Fast Doubling Method](https://cp-algorithms.com/algebra/fibonacci-numbers.html#fast-doubling-method)
 
 * [Modular arithmetic: Modular Inverse using Binary Exponentiation](https://cp-algorithms.com/algebra/module-inverse.html#finding-the-modular-inverse-using-binary-exponentiation)
+
+# Useful Tools
+
+* [Prime Numbers from 0 to 1,000,000 (1e6)](https://www.mathematical.com/primes0to1000k.html)
+
+* [Prime Numbers from 0 to 1000 billion](http://compoasso.free.fr/primelistweb/page/prime/liste_online_en.php)
+
+* [Prime Factorization Calculator](https://www.calculatorsoup.com/calculators/math/prime-factors.php)
+
+* [Permutation and Combination Calculator](https://www.calculator.net/permutation-and-combination-calculator.html)
+
+* [Powers of 2](http://www.thealmightyguru.com/Pointless/PowersOf2.html)
+
+* [First 500 Fibonacci numbers](https://gist.github.com/brchiu/71bf87f51be35d6e334f4898b1ebd011)
+
+* [Divisors of a Number](https://www.dcode.fr/divisors-list-number)
