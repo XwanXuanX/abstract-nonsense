@@ -34,6 +34,8 @@
 
 * [Modular arithmetic: Modular Inverse using Binary Exponentiation](https://cp-algorithms.com/algebra/module-inverse.html#finding-the-modular-inverse-using-binary-exponentiation)
 
+* [Erdős–Szekeres theorem](https://en.wikipedia.org/wiki/Erd%C5%91s%E2%80%93Szekeres_theorem)
+
 # Useful Tools
 
 * [Prime Numbers from 0 to 1,000,000 (1e6)](https://www.mathematical.com/primes0to1000k.html)
