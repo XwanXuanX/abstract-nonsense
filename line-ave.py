@@ -2,6 +2,8 @@
 # Goal: THE FEWER THE BETTER!
 
 import os
+import csv
+from datetime import date
 from pathlib import Path
 from contextlib import closing
 
@@ -20,4 +22,10 @@ for filename in os.listdir(r"./archive/"):
         total += len(lines)
 
 # output the result
-print(f"Average number lines of code: {total / count}")
+result = total / count
+print(f"Average number lines of code: {result}")
+
+# log the result to a csv file
+with open("codelens.csv", 'a', newline='\n') as csvfile:
+    writer = csv.writer(csvfile)
+    writer.writerow([date.today(), count, total, result])
