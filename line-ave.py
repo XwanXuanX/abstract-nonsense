@@ -28,7 +28,9 @@ print(f"Average number lines of code: {result}")
 # log the result to a csv file
 # we can check if there's any update to archive since last logging, if non, ignore this action
 TOTAL_FILE = 1
-with closing(open("codelens.csv", 'r')) as csvfile:
+LOG_FILE: str = "codelens.csv"
+
+with closing(open(LOG_FILE, 'r')) as csvfile:
     reader = csv.reader(csvfile)
     lines = [line for line in reader]
     last = lines[len(lines) - 1]
@@ -37,6 +39,6 @@ with closing(open("codelens.csv", 'r')) as csvfile:
         exit(1)
 
 # otherwise, we can proceed to log the result
-with open("codelens.csv", 'a', newline='\n') as csvfile:
+with open(LOG_FILE, 'a', newline='\n') as csvfile:
     writer = csv.writer(csvfile)
     writer.writerow([date.today(), count, total, result])
