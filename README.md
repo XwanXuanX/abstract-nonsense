@@ -36,6 +36,8 @@
 
 * [Erdős–Szekeres theorem](https://en.wikipedia.org/wiki/Erd%C5%91s%E2%80%93Szekeres_theorem)
 
+* [Graph strong orientation: $Ud \rightarrow SCC$](https://cp-algorithms.com/graph/strong-orientation.html)
+
 # Useful Tools
 
 * [Prime Numbers from 0 to 1,000,000 (1e6)](https://www.mathematical.com/primes0to1000k.html)
