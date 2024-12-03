@@ -20,6 +20,8 @@
 
 * [Fenwick tree - query range sum](https://www.youtube.com/watch?v=RgITNht_f4Q)
 
+  * [Imp: Zero-based, pt update, rng query](https://cp-algorithms.com/data_structures/fenwick.html#implementation)
+
 * [Finding bridge in graph](https://www.youtube.com/watch?v=qrAub5z8FeA)
 
 * [Finding articulation point in graph](https://www.youtube.com/watch?v=j1QDfU21iZk)
@@ -53,3 +55,7 @@
 * [First 500 Fibonacci numbers](https://gist.github.com/brchiu/71bf87f51be35d6e334f4898b1ebd011)
 
 * [Divisors of a Number](https://www.dcode.fr/divisors-list-number)
+
+# Techniques
+
+* [Count of smaller elements on right side of each element in an Array using Merge sort](https://www.geeksforgeeks.org/count-of-smaller-elements-on-right-side-of-each-element-in-an-array-using-merge-sort/?ref=ml_lbp)
