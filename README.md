@@ -56,6 +56,8 @@
 
 * [Divisors of a Number](https://www.dcode.fr/divisors-list-number)
 
+* [Graph visualizer](https://csacademy.com/app/graph_editor/)
+
 # Techniques
 
 * [Count of smaller elements on right side of each element in an Array using Merge sort](https://www.geeksforgeeks.org/count-of-smaller-elements-on-right-side-of-each-element-in-an-array-using-merge-sort/?ref=ml_lbp)
