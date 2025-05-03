@@ -4,6 +4,8 @@
 clean:
 	@rm ./archive/*.bin   || true
 	@rm -r ./archive/.cph || true
+	@rm ./cses/*.bin      || true
+	@rm -r ./cses/.cph    || true
 	@rm -r ./.vscode	  || true
 
 
