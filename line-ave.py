@@ -10,14 +10,14 @@ from contextlib import closing
 count: int = 0
 total: int = 0
 
-for filename in os.listdir(r"./archive/"):
+for filename in os.listdir(r"./cf/"):
     # only count cpp files
     if Path(filename).suffix != ".cpp":
         continue
 
     count += 1
 
-    with closing(open(os.path.join(r"./archive", filename))) as file:
+    with closing(open(os.path.join(r"./cf", filename))) as file:
         lines = file.readlines()
         total += len(lines)
 
@@ -26,7 +26,7 @@ result = total / count
 print(f"Average number lines of code: {result}")
 
 # log the result to a csv file
-# we can check if there's any update to archive since last logging, if non, ignore this action
+# we can check if there's any update to cf since last logging, if non, ignore this action
 TOTAL_FILE = 1
 LOG_FILE: str = "codelens.csv"
 
