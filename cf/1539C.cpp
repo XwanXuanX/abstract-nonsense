@@ -42,6 +42,9 @@ const int dx[4]{1, 0, -1, 0}, dy[4]{0, 1, 0, -1};  // for every grid problem!!
 }  // namespace Consts
 /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 
+#define int long long
+#define double long double
+
 signed main() {
     ios_base::sync_with_stdio(0);
     cin.tie(0);
@@ -52,4 +55,42 @@ signed main() {
         re(a[i]);
     }
     sort(a.begin(), a.end());
+    V<int> gap;
+    for (int i = 1; i < n;  ++i) {
+        int g = a[i] - a[i-1];
+        if (g > x) {
+            gap.push_back(g);
+        }
+    }
+
+    // we want to merge stable groups as much as possible
+    // thus it's always good to start with the smaller gap
+    sort(gap.begin(), gap.end());
+
+    // but k is VERY large
+    // we can find the min ppl needed to resolve each gap and add up
+    // then binary search on k
+    for (int i = 0; i < gap.size(); ++i) {
+        gap[i] = (int)ceil((double)(gap[i] - x) / x);
+    }
+    for (int i = 1; i < gap.size(); ++i) {
+        gap[i] += gap[i-1];
+    }
+
+    int l = 0, r = gap.size() - 1;
+    while (l <= r) {
+        int mid = (l + r) >> 1;
+        if (gap[mid] > k) {
+            r = mid - 1;
+        } else {
+            l = mid + 1;
+        }
+    }
+
+    // ps(gap);
+    // ps(l);
+    ps(gap.size() - l + 1);
 }
+
+// 1 1 3 5 9 9
+// 4 and 4
