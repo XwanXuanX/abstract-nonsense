@@ -58,6 +58,8 @@
 
 * [Graph visualizer](https://csacademy.com/app/graph_editor/)
 
+* [*GREATEST TEMPLATE COLLECTION*](https://github.com/the-tourist/algo)
+
 # Techniques
 
 * [Count of smaller elements on right side of each element in an Array using Merge sort](https://www.geeksforgeeks.org/count-of-smaller-elements-on-right-side-of-each-element-in-an-array-using-merge-sort/?ref=ml_lbp)
