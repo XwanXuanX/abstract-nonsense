@@ -8,6 +8,7 @@ from contextlib import closing
 ###################################################
 # Add more folders if necessary
 problem_folders: list[str] = [
+    r"./atcoder/",
     r"./cf/",
     r"./cses/",
     r"./random/",

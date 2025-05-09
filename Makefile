@@ -6,6 +6,8 @@ clean:
 	@rm -r ./cf/.cph      || true
 	@rm ./cses/*.bin      || true
 	@rm -r ./cses/.cph    || true
+	@rm ./atcoder/*.bin        || true
+	@rm -r ./atcoder/.cph      || true
 	@rm -r ./.vscode	  || true
 
 
