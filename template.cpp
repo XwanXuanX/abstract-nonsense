@@ -16,11 +16,11 @@ template <class... Ts> void print(Ts const &...ts) const { ((Impl(ts)), ...); }
 void print_with_sep(const std::string &) const { os << '\n'; } };
 } // namespace details
 /******************************************************************* IO **********************************************************************************/
+#define fastIO ios_base::sync_with_stdio(0); cin.tie(0), cout.tie(0)
 template <class... Ts> void re(Ts &...ts) { details::Reader<cin>{}.read(ts...); }
 template <class... Ts> void pr(Ts const &...ts) { details::Writer<cout, true>{}.print(ts...); }
 template <class... Ts> void ps(Ts const &...ts) { details::Writer<cout, true>{}.print_with_sep(" ", ts...); }
 /****************************************************************** TOOL *********************************************************************************/
-#define fastIO ios_base::sync_with_stdio(0); cin.tie(0), cout.tie(0)
 template<typename T> using V = vector<T>; template<typename T, size_t SZ> using AR = array<T, SZ>;
 template<typename T> using pqg = priority_queue<T, V<T>, greater<T>>; // return smallest
 template<typename T> using pql = priority_queue<T, V<T>, less<T>>; // return largest
