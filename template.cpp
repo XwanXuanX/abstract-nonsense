@@ -39,7 +39,9 @@ void solve() {
 signed main() {
     fastIO;
     int tt = 1;
+#ifndef single
     re(tt);
+#endif
     while (tt--) {
         solve();
     }
