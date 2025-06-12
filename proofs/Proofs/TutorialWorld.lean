@@ -18,10 +18,15 @@ def mul : MyNat → MyNat → MyNat
   | a, zero => zero               -- mul_zero := a * 0 = 0
   | a, succ b => add (mul a b) a  -- mul_succ := a * succ b = (a * b) + a
 
+def pow : MyNat → MyNat → MyNat
+  | a, zero => succ zero          -- pow_zero := a ^ 0  = 0
+  | a, succ b => mul (pow a b) a  -- pow_succ := a ^ succ b = a ^ b * a
+
 instance : OfNat MyNat (nat_lit 0) := ⟨zero⟩
 instance (n : Nat) [OfNat MyNat n]: OfNat MyNat (n + 1) := ⟨succ (OfNat.ofNat n)⟩
 instance : HAdd MyNat MyNat MyNat where hAdd := add
 instance : HMul MyNat MyNat MyNat where hMul := mul
+instance : HPow MyNat MyNat MyNat where hPow := pow
 
 theorem one_eq_succ_zero : 1 = succ 0 := by rfl
 theorem two_eq_succ_one : 2 = succ 1 := by rfl
