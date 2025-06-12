@@ -13,9 +13,15 @@ def add : MyNat → MyNat → MyNat
   | a, zero => a                  -- add_zero := a + 0 = a
   | a, succ b => succ (add a b)   -- add_succ := a + succ b = succ (a + b)
 
+set_option linter.unusedVariables false
+def mul : MyNat → MyNat → MyNat
+  | a, zero => zero               -- mul_zero := a * 0 = 0
+  | a, succ b => add (mul a b) a  -- mul_succ := a * succ b = (a * b) + a
+
 instance : OfNat MyNat (nat_lit 0) := ⟨zero⟩
 instance (n : Nat) [OfNat MyNat n]: OfNat MyNat (n + 1) := ⟨succ (OfNat.ofNat n)⟩
 instance : HAdd MyNat MyNat MyNat where hAdd := add
+instance : HMul MyNat MyNat MyNat where hMul := mul
 
 theorem one_eq_succ_zero : 1 = succ 0 := by rfl
 theorem two_eq_succ_one : 2 = succ 1 := by rfl
