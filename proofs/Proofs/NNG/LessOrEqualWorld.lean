@@ -51,13 +51,75 @@ theorem le_antisymm (x y : MyNat) (hxy : x ≤ y) (hyx : y ≤ x) : x = y := by
 example (x y : MyNat) (h : x = 37 ∨ y = 42) : y = 42 ∨ x = 37 := by
   cases h with
   | inl hx =>
-      right
-      exact hx
+    right
+    exact hx
   | inr hy =>
-      left
-      exact hy
+    left
+    exact hy
 
 theorem le_total (x y : MyNat) : x ≤ y ∨ y ≤ x := by
-  sorry
+  induction y with
+  | zero =>
+    change x ≤ 0 ∨ 0 ≤ x
+    right
+    use x
+    rw [zero_add]
+  | succ d hd =>
+    cases hd with
+    | inl h1 =>
+      left
+      have ⟨e, he⟩ := h1
+      use (e + 1)
+      rw [he, succ_eq_add_one, add_assoc]
+    | inr h2 =>
+      have ⟨e, he⟩ := h2
+      cases e with
+      | zero =>
+        change x = d + 0 at he
+        left
+        rw [he, ← add_zero]
+        exact le_succ_self d
+      | succ e =>
+        right
+        rw [he, add_succ, ← succ_add]
+        use e
+
+theorem succ_le_succ (x y : MyNat) (hx : succ x ≤ succ y) : x ≤ y := by
+  have ⟨c, hc⟩ := hx
+  use c
+  rw [succ_add] at hc
+  exact succ_inj _ _ hc
+
+theorem le_one (x : MyNat) (hx : x ≤ 1) : x = 0 ∨ x = 1 := by
+  cases x with
+  | zero =>
+    left
+    change 0 = 0
+    rfl
+  | succ x =>
+    rw [one_eq_succ_zero] at hx
+    have hx := le_zero _ (succ_le_succ _ _ hx)
+    rw [hx]
+    right
+    rw [one_eq_succ_zero]
+
+theorem le_two (x : MyNat) (hx : x ≤ 2) : x = 0 ∨ x = 1 ∨ x = 2 := by
+  cases x with
+  | zero =>
+    left
+    change 0 = 0
+    rfl
+  | succ x =>
+    rw [two_eq_succ_one] at hx
+    have hx := le_one _ (succ_le_succ _ _ hx)
+    cases hx with
+    | inl h1 =>
+      right
+      left
+      rw [h1, one_eq_succ_zero]
+    | inr h2 =>
+      right
+      right
+      rw [h2, two_eq_succ_one]
 
 end LessOrEqualWorld
