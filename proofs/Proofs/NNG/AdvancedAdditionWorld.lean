@@ -1,4 +1,4 @@
-import Proofs.ImplicationWorld
+import Proofs.NNG.ImplicationWorld
 
 namespace AdvancedAdditionWorld
 

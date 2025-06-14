@@ -1,5 +1,5 @@
-import Proofs.TutorialWorld
-import Proofs.AdditionWorld
+import Proofs.NNG.TutorialWorld
+import Proofs.NNG.AdditionWorld
 
 namespace MultiplicationWorld
 

@@ -1,4 +1,4 @@
-import Proofs.MultiplicationWorld
+import Proofs.NNG.MultiplicationWorld
 
 namespace PowerWorld
 

@@ -1,4 +1,4 @@
-import Proofs.TutorialWorld
+import Proofs.NNG.TutorialWorld
 import Mathlib.Data.Nat.Basic
 
 namespace AdditionWorld

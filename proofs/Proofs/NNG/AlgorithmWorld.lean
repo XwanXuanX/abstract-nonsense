@@ -1,6 +1,6 @@
-import Proofs.TutorialWorld
-import Proofs.AdditionWorld
-import Proofs.ImplicationWorld
+import Proofs.NNG.TutorialWorld
+import Proofs.NNG.AdditionWorld
+import Proofs.NNG.ImplicationWorld
 
 namespace AlgorithmWorld
 

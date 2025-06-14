@@ -1,4 +1,4 @@
-import Proofs.AdvancedAdditionWorld
+import Proofs.NNG.AdvancedAdditionWorld
 import Mathlib.Tactic.Use
 
 namespace LessOrEqualWorld
@@ -59,8 +59,5 @@ example (x y : MyNat) (h : x = 37 ∨ y = 42) : y = 42 ∨ x = 37 := by
 
 theorem le_total (x y : MyNat) : x ≤ y ∨ y ≤ x := by
   sorry
-
-
-
 
 end LessOrEqualWorld
