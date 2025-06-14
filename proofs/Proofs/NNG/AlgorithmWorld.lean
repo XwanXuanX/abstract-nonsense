@@ -37,22 +37,22 @@ theorem succ_ne_succ (m n : MyNat) (h : m ≠ n) : succ m ≠ succ n := by
 -- This algorithm solves if a == b or a != b type of goal
 instance instDecidableEq : DecidableEq MyNat
   | 0, 0 => isTrue <| by
-      show 0 = 0
-      rfl
+    show 0 = 0
+    rfl
   | succ m, 0 => isFalse <| by
-      show succ m ≠ 0
-      exact succ_ne_zero m
+    show succ m ≠ 0
+    exact succ_ne_zero m
   | 0, succ n => isFalse <| by
-      show 0 ≠ succ n
-      exact zero_ne_succ n
+    show 0 ≠ succ n
+    exact zero_ne_succ n
   | succ m, succ n =>
-      match instDecidableEq m n with
-      | isTrue (h : m = n) => isTrue <| by
-          show succ m = succ n
-          rw [h]
-      | isFalse (h : m ≠ n) => isFalse <| by
-          show succ m ≠ succ n
-          exact succ_ne_succ m n h
+    match instDecidableEq m n with
+    | isTrue (h : m = n) => isTrue <| by
+      show succ m = succ n
+      rw [h]
+    | isFalse (h : m ≠ n) => isFalse <| by
+      show succ m ≠ succ n
+      exact succ_ne_succ m n h
 
 section Toys
   example (a b c d : MyNat) : a + b + (c + d) = a + c + d + b := by
