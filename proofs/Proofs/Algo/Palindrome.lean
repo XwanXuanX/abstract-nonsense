@@ -106,7 +106,7 @@ inductive Prefix : List α → List α → Prop where
   | cons  : ∀ a l₁ l₂, Prefix l₁ l₂ → Prefix (a :: l₁) (a :: l₂)
 
 inductive Suffix : List α → List α → Prop where
-  | nil   : ∀ l, Suffix l []
+  | nil   : ∀ l, Suffix [] l
   | cons  : ∀ a l₁ l₂, Suffix l₁ l₂ → Suffix (l₁ ++ [a]) (l₂ ++ [a])
 
 def isPrefix [DecidableEq α] (as ab: List α) : Bool :=
@@ -116,7 +116,7 @@ def isPrefix [DecidableEq α] (as ab: List α) : Bool :=
   | a::asc, b::abc => if a = b then isPrefix asc abc else false
 
 -- Proves that the function `isPrefix` is always correct
-theorem is_prefix_correct [DecidableEq α] (as ab : List α) : isPrefix as ab  ↔ Prefix as ab := by {
+theorem is_prefix_correct [DecidableEq α] (as ab : List α) : isPrefix as ab ↔ Prefix as ab := by {
   constructor
   show isPrefix as ab = true → Prefix as ab; {
     intro h
@@ -149,13 +149,52 @@ theorem is_prefix_correct [DecidableEq α] (as ab : List α) : isPrefix as ab  �
   }
 }
 
+-- Notice that we now can define isSuffix from isPrefix!
+-- ... but we should still prove it's correctness (that the suffix = prefix of the reverse)
+def isSuffix [DecidableEq α] (as : List α) (ab : List α) : Bool :=
+  isPrefix as.reverse ab.reverse
+
+-- For the other direction, I want to prove this generalized lemma
+-- ... so that it can help me in proving the main goal
+lemma prefix_reverse_suffix [DecidableEq α] (xs ys : List α) : Prefix xs ys → Suffix xs.reverse ys.reverse := by {
+  intro h
+  induction h with
+  | nil ys => exact Suffix.nil (ys.reverse)
+  | cons a xs' ys' h' ih => simp; exact Suffix.cons a (xs'.reverse) (ys'.reverse) ih
+}
+
+-- Prove that the suffix of as = the prefix of as.reverse
+theorem suffix_eq_prefix_rev [DecidableEq α] (as ab : List α) : Suffix as ab ↔ Prefix as.reverse ab.reverse := by {
+  constructor
+  show Suffix as ab → Prefix as.reverse ab.reverse; {
+    intro h
+    induction h with
+    | nil ab => exact Prefix.nil (ab.reverse)
+    | cons a as' ab' h' ih => simp; exact Prefix.cons a (as'.reverse) (ab'.reverse) ih
+  }
+  show Prefix as.reverse ab.reverse → Suffix as ab; {
+    intro h
+    obtain h := prefix_reverse_suffix as.reverse ab.reverse h
+    simp at h; exact h
+  }
+}
+
+-- Proves that the function `isSuffix` is always correct
+theorem is_suffix_correct [DecidableEq α] (as ab : List α) : isSuffix as ab ↔ Suffix as ab := by {
+  constructor
+  show isSuffix as ab = true → Suffix as ab; {
+    intro h
+    rw [isSuffix] at h; rw [suffix_eq_prefix_rev]
+    exact (is_prefix_correct as.reverse ab.reverse).mp h
+  }
+  show Suffix as ab → isSuffix as ab = true; {
+    intro h
+    rw [isSuffix]; rw [suffix_eq_prefix_rev] at h
+    exact (is_prefix_correct as.reverse ab.reverse).mpr h
+  }
+}
 
 
-
-
--- def isSuffix [DecidableEq α] (as : List α) (ab : List α) : Bool :=
---   match as, ab with
---   | [], _ => true
 
 
 
