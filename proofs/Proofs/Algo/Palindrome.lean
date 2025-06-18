@@ -1,14 +1,13 @@
+import Mathlib.Data.Nat.Basic
 import Mathlib.Data.List.Basic
 import Mathlib.Tactic
 
-variable {α : Type}
-variable {a : α}
-variable {as : List α}
+variable {α : Type} {a : α} {as : List α}
 
 inductive Palindrome : List α → Prop where
   | nil      : Palindrome []
-  | single   : ∀a, Palindrome [a]
-  | sandwich : ∀a as, Palindrome as → Palindrome ([a] ++ as ++ [a])
+  | single   : ∀ a, Palindrome [a]
+  | sandwich : ∀ a as, Palindrome as → Palindrome ([a] ++ as ++ [a])
 
 -- Proves that ([a] ++ as ++ [a]).reverse = [a] ++ as.reverse ++ [a]
 lemma rev_eq (a : α) : ([a] ++ as ++ [a]).reverse = [a] ++ as.reverse ++ [a] := by
@@ -194,24 +193,54 @@ theorem is_suffix_correct [DecidableEq α] (as ab : List α) : isSuffix as ab �
   }
 }
 
+theorem Prefix.eq_take [DecidableEq α] (xs ys : List α) (h : Prefix xs ys) : xs = ys.take xs.length := by {
+  induction h with
+  | nil ys => rfl
+  | cons a l1 l2 h ih => simp; exact ih
+}
 
+lemma drop_append_of_le_length [DecidableEq α] (l1 l2 : List α) (n : ℕ) (h : n ≤ l1.length) :
+  List.drop n (l1 ++ l2) = (List.drop n l1) ++ l2 := by {
+  induction n generalizing l1 l2 with
+  | zero => simp
+  | succ n' ih =>
+    cases l1 with
+      | nil => contradiction -- contradiction: succ n' ≤ 0 is false
+      | cons x xs => simp at h; simp; exact ih xs l2 h
+}
 
+theorem Suffix.eq_drop [DecidableEq α] (xs ys : List α) (h : Suffix xs ys) : xs = ys.drop (ys.length - xs.length) := by {
+  induction h with
+  | nil ys => simp
+  | cons a l1 l2 h ih =>
+    have h1 : (l1 ++ [a]).length = l1.length + 1 := by simp
+    have h2 : (l2 ++ [a]).length = l2.length + 1 := by simp
+    simp [h1, h2]; nth_rewrite 1 [ih]
+    simp [drop_append_of_le_length]
+}
 
+-- Prove the other direction of `reverse_eq_of_palindrome`
+theorem Palindrome.of_eq_reverse [DecidableEq α] (xs : List α) (h : xs = xs.reverse) : Palindrome xs := by {
+  sorry -- Have to do it sooner or later
+}
+
+-- Now we can finally formally define fun fact 5!
+-- . 5. Every prefix of a palindrome that is also a suffix of the same length is itself a palindrome.
+-- . What chatgpt means, is that, given a prefix of length n of a palindrome, and get the suffix of the
+-- . same length. If they are equal, that that prefix is also a palindrome! Very interesting fact!
+-- . Prefix [1, 2, 1, 2, 1] [1, 2, 1, 2, 1, 2, 1]
+theorem prefix_eq_suffix_palindrome [DecidableEq α] (as pas : List α)
+    (h₁ : Palindrome as) (h₂ : Prefix pas as) (h₃ : Suffix pas as) : Palindrome pas := by {
+  sorry
+}
 
 section check
 
-variable {α : Type}
-#eval isPrefix [] [1]
-#eval isPrefix [1] []
-#eval isPrefix [1, 2, 3] [1, 2, 3, 4, 5]
-#eval isPrefix [1, 2, 3] [1, 3, 5, 7, 9]
+#eval isPrefix [] [1] -- true
+#eval isPrefix [1] [] -- false
+#eval isPrefix [1, 2, 3] [1, 2, 3, 4, 5] -- true
+#eval isPrefix [1, 2, 3] [1, 3, 5, 7, 9] -- false
 
 end check
-
-
-
-
-
-
 
 end PalindromeFacts
