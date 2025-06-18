@@ -248,8 +248,14 @@ theorem concat_rev_palindrome [DecidableEq α] (as : List α) : Palindrome (as +
   induction as with
   | nil => exact Palindrome.nil
   | cons a as' ih =>
-    -- Need
-    sorry
+    -- Need to show that (a :: as').reverse = as'.reverse ++ [a]
+    have h : (a :: as').reverse = as'.reverse ++ [a] := by simp
+    rw [h] -- now adjust the goal to Palindrome ([a] ++ (as' ++ as'.reverse) ++ [a])
+    -- Then we can use the `sandwich` constructor easily
+    have h1 : a :: as' = [a] ++ as' := by simp
+    have h2 (a : α) (xs xy : List α) : xs ++ (xy ++ [a]) = (xs ++ xy) ++ [a] := by simp
+    rw [h1, List.append_assoc, h2]
+    exact Palindrome.sandwich a (as' ++ as'.reverse) ih
 }
 
 -- 11. A list is a palindrome if and only if it is equal to its reverse.
@@ -257,12 +263,6 @@ theorem Palindrome.iff_eq_reverse [DecidableEq α] : Palindrome as ↔ as = as.r
   constructor
   · intro h; exact Eq.symm (reverse_eq_of_palindrome h)
   · intro h; exact Palindrome.of_eq_reverse _ h
-}
-
-lemma one_ne_add_twice {k : ℕ} (h : 1 = k + k) : False := by {
-  cases k with
-  | zero => linarith
-  | succ k' => linarith
 }
 
 -- 12. If a palindrome has even length, it can be written as xs ++ xs.reverse for some list xs.
@@ -274,7 +274,11 @@ theorem even_palindrome_eq_concat_rev [DecidableEq α] (h : Palindrome as) :
   | nil => simp
   | single a => -- we need to show that this is a contradiction, can't happen
     obtain ⟨k, hk⟩ := h1;
-    simp_all; have hk' := one_ne_add_twice hk; contradiction
+    have (h : 1 = k + k) : False := by
+      cases k with
+      | zero => linarith
+      | succ k' => linarith
+    simp_all [this];
   | sandwich a as' h' ih =>
     obtain ⟨k, hk⟩ := h1
     -- Fill in this blank
