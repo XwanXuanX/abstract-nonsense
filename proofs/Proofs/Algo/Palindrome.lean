@@ -221,7 +221,7 @@ theorem Suffix.eq_drop [DecidableEq α] (xs ys : List α) (h : Suffix xs ys) : x
 
 -- Prove the other direction of `reverse_eq_of_palindrome`
 theorem Palindrome.of_eq_reverse [DecidableEq α] (xs : List α) (h : xs = xs.reverse) : Palindrome xs := by {
-  sorry -- Have to do it sooner or later
+  sorry
 }
 
 -- Now we can finally formally define fun fact 5!
@@ -232,6 +232,46 @@ theorem Palindrome.of_eq_reverse [DecidableEq α] (xs : List α) (h : xs = xs.re
 theorem prefix_eq_suffix_palindrome [DecidableEq α] (as pas : List α)
     (h₁ : Palindrome as) (h₂ : Prefix pas as) (h₃ : Suffix pas as) : Palindrome pas := by {
   sorry
+}
+
+-- 6. If a list is a palindrome, then its length is even or odd according to whether the list is made by the sandwich or single constructor.
+theorem len_even_or_odd [DecidableEq α] (h : Palindrome as) : Even as.length ∨ Odd as.length := by {
+  induction h with
+  | nil => left; simp
+  | single a => right; simp
+  | sandwich a as' h' ih =>
+    rcases ih with ihl | ihr
+    · left; simp [ihl]
+    · right; simp [ihr]
+}
+
+-- 11. A list is a palindrome if and only if it is equal to its reverse.
+theorem Palindrome.iff_eq_reverse [DecidableEq α] : Palindrome as ↔ as = as.reverse := by {
+  constructor
+  · intro h; exact Eq.symm (reverse_eq_of_palindrome h)
+  · intro h; exact Palindrome.of_eq_reverse _ h
+}
+
+lemma one_ne_add_twice {k : ℕ} (h : 1 = k + k) : False := by {
+  cases k with
+  | zero => linarith
+  | succ k' => linarith
+}
+
+-- 12. If a palindrome has even length, it can be written as xs ++ xs.reverse for some list xs.
+theorem even_palindrome_eq_concat_rev [DecidableEq α] (h : Palindrome as) :
+  Even as.length → ∃ xs, as = xs ++ xs.reverse := by {
+  intro h1
+  use List.take (as.length / 2) as
+  induction h with
+  | nil => simp
+  | single a => -- we need to show that this is a contradiction, can't happen
+    obtain ⟨k, hk⟩ := h1;
+    simp_all; have hk' := one_ne_add_twice hk; contradiction
+  | sandwich a as' h' ih =>
+    obtain ⟨k, hk⟩ := h1
+    -- Fill in this blank
+    sorry
 }
 
 section check
