@@ -199,16 +199,6 @@ theorem Prefix.eq_take [DecidableEq α] (xs ys : List α) (h : Prefix xs ys) : x
   | cons a l1 l2 h ih => simp; exact ih
 }
 
-lemma drop_append_of_le_length [DecidableEq α] (l1 l2 : List α) (n : ℕ) (h : n ≤ l1.length) :
-  List.drop n (l1 ++ l2) = (List.drop n l1) ++ l2 := by {
-  induction n generalizing l1 l2 with
-  | zero => simp
-  | succ n' ih =>
-    cases l1 with
-      | nil => contradiction -- contradiction: succ n' ≤ 0 is false
-      | cons x xs => simp at h; simp; exact ih xs l2 h
-}
-
 theorem Suffix.eq_drop [DecidableEq α] (xs ys : List α) (h : Suffix xs ys) : xs = ys.drop (ys.length - xs.length) := by {
   induction h with
   | nil ys => simp
@@ -216,7 +206,15 @@ theorem Suffix.eq_drop [DecidableEq α] (xs ys : List α) (h : Suffix xs ys) : x
     have h1 : (l1 ++ [a]).length = l1.length + 1 := by simp
     have h2 : (l2 ++ [a]).length = l2.length + 1 := by simp
     simp [h1, h2]; nth_rewrite 1 [ih]
-    simp [drop_append_of_le_length]
+    have (l1 l2 : List α) (n : ℕ) (h : n ≤ l1.length) :
+      List.drop n (l1 ++ l2) = (List.drop n l1) ++ l2 := by
+      induction n generalizing l1 l2 with
+      | zero => simp
+      | succ n' ih =>
+        cases l1 with
+          | nil => contradiction -- contradiction: succ n' ≤ 0 is false
+          | cons x xs => simp at h; simp; exact ih xs l2 h
+    simp [this]
 }
 
 -- Prove the other direction of `reverse_eq_of_palindrome`
@@ -243,6 +241,15 @@ theorem len_even_or_odd [DecidableEq α] (h : Palindrome as) : Even as.length �
     rcases ih with ihl | ihr
     · left; simp [ihl]
     · right; simp [ihr]
+}
+
+-- 10. The concatenation of a list and its reverse is always a palindrome.
+theorem concat_rev_palindrome [DecidableEq α] (as : List α) : Palindrome (as ++ as.reverse) := by {
+  induction as with
+  | nil => exact Palindrome.nil
+  | cons a as' ih =>
+    -- Need
+    sorry
 }
 
 -- 11. A list is a palindrome if and only if it is equal to its reverse.
