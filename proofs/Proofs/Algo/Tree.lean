@@ -123,6 +123,69 @@ theorem BinaryTree.eq_of_eq [DecidableEq α] {t1 t2 : BinaryTree α} :
         simp [getLeft, getRight, getVal] at h_left h_right h_val
         rw [h_left, h_right, h_val]
 
+-- 8. A tree made of only one node has depth 1 and size 1.
+theorem BinaryTree.single_node_depth_size [DecidableEq α] (val : α) :
+  depth (node leaf val leaf) = 1 ∧ size (node leaf val leaf) = 1 := by
+  simp [depth, size]
+
+-- 9. A leaf is not a node.
+theorem BinaryTree.leaf_not_node [DecidableEq α] (t : BinaryTree α) (h : t = leaf) :
+  ¬ ∃left val right, t = node left val right := by
+  by_contra h1
+  obtain ⟨left, val, right, h_node⟩ := h1
+  rw [h] at h_node
+  contradiction
+
+-- 10. If a tree has depth 0, it must be a leaf.
+theorem BinaryTree.depth_zero_is_leaf [DecidableEq α] (t : BinaryTree α) (h : depth t = 0) : t = leaf := by
+  induction t with
+  | leaf => rfl
+  | node l v r ih_l ih_r => simp [depth] at h
+
+-- 11. The size of a swapped tree is the same as the original.
+theorem BinaryTree.swapped_size [DecidableEq α] (t : BinaryTree α) : size (swap t) = size t := by
+  induction t with
+  | leaf => simp [swap, size]
+  | node l v r ih_l ih_r =>
+    simp [swap, size, ih_l, ih_r]
+    rw [Nat.add_assoc, Nat.add_assoc, Nat.add_comm (size l) (size r)]
+
+-- 13. There exists a tree of size n for every natural number n.
+theorem BinaryTree.exists_tree_of_size_n [DecidableEq α] {val : α} : ∀ n : Nat, ∃ t : BinaryTree α, size t = n := by
+  intro n
+  induction n with
+  | zero => use leaf; simp [size]
+  | succ d ih =>
+    obtain ⟨t, h_size⟩ := ih
+    use node t val leaf
+    simp [size, h_size, Nat.add_comm]
+
+-- Define the mirroring operation for a binary tree.
+def BinaryTree.mirror : BinaryTree α → BinaryTree α
+  | leaf => leaf -- Mirroring a leaf results in a leaf.
+  | node left val right => node (mirror right) val (mirror left) -- Swap the left and right subtrees recursively.
+
+-- Define the symmetric property for a binary tree.
+def BinaryTree.symmetric (t : BinaryTree α) : Prop :=
+  t = mirror t -- A tree is symmetric if it is equal to its mirrored version.
+
+-- Function to check if a binary tree is symmetric.
+def BinaryTree.is_symmetric [DecidableEq (BinaryTree α)] (t : BinaryTree α) : Bool :=
+  if t = mirror t then true else false
+
+-- 16. A tree with only leafs as children of the root has depth 1.
+theorem BinaryTree.leafs_as_children_depth [DecidableEq α] (val : α) :
+  depth (node leaf val leaf) = 1 := by
+  simp [depth]
+
+-- 17. The maximum depth of a tree with n nodes is n.
+theorem BinaryTree.max_depth_n_nodes [DecidableEq α] (n : Nat) :
+  ∀ t : BinaryTree α, size t = n → depth t ≤ n := by
+  intro t h_size
+  rw [← h_size]
+  -- Idea: proof by construction.
+  sorry
+
 end BinTreeFacts
 
 end BinTree
