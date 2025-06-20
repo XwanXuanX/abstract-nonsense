@@ -179,12 +179,24 @@ theorem BinaryTree.leafs_as_children_depth [DecidableEq α] (val : α) :
   simp [depth]
 
 -- 17. The maximum depth of a tree with n nodes is n.
-theorem BinaryTree.max_depth_n_nodes [DecidableEq α] (n : Nat) :
-  ∀ t : BinaryTree α, size t = n → depth t ≤ n := by
-  intro t h_size
-  rw [← h_size]
-  -- Idea: proof by construction.
-  sorry
+-- Notice that this formalization states that: *depth of the tree is bounded by its size*
+-- Which is equivalent to the fact that we want to prove.
+theorem BinaryTree.max_depth_n_nodes [DecidableEq α] : ∀ t : BinaryTree α, depth t ≤ size t := by
+  intro t
+  induction t with
+  | leaf => rfl
+  | node l v r ih_l ih_r =>
+    simp [depth, size, Nat.add_assoc]
+    constructor
+    show l.depth ≤ l.size + r.size
+    · have claim1 : l.size ≤ l.size + r.size := by
+        exact Nat.le_add_right l.size r.size
+      exact Nat.le_trans ih_l claim1
+    show r.depth ≤ l.size + r.size
+    · have claim1 : r.size ≤ l.size + r.size := by
+        rw [Nat.add_comm]
+        exact Nat.le_add_right r.size l.size
+      exact Nat.le_trans ih_r claim1
 
 end BinTreeFacts
 
