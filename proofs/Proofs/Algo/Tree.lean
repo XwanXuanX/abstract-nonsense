@@ -198,6 +198,82 @@ theorem BinaryTree.max_depth_n_nodes [DecidableEq α] : ∀ t : BinaryTree α, d
         exact Nat.le_add_right r.size l.size
       exact Nat.le_trans ih_r claim1
 
+-- Definition of the `Full` predicate
+inductive BinaryTree.Full : BinaryTree α → Prop where
+  | nil : Full leaf
+  | cons : ∀ (l r : BinaryTree α) (x : α),
+    Full l → Full r → (l = leaf ↔ r = leaf) → Full (node l x r)
+
+-- Function to check if the binary tree is full.
+-- A full binary tree is one where every node has either 0 or 2 children.
+def BinaryTree.isFull : BinaryTree α → Bool
+  | leaf => true
+  | node left _ right =>
+    match left, right with
+    | leaf, leaf => true
+    | leaf, _ => false
+    | _, leaf => false
+    | _, _ => isFull left && isFull right
+
+-- Function to compute the number of leaves in the binary tree
+def BinaryTree.numLeaves : BinaryTree α → Nat
+  | leaf => 1
+  | node left _ right => numLeaves left + numLeaves right
+
+-- Prove that BinaryTree.isFull is correct
+theorem BinaryTree.is_full_correct [DecidableEq α] {t : BinaryTree α} : isFull t = true ↔ Full t := by
+  constructor
+  -- Prove .mp
+  show t.isFull = true → t.Full
+  · intro h
+    induction t with
+    | leaf => exact Full.nil
+    | node ltree x rtree ihl ihr =>
+      cases ltree with
+      | leaf =>
+        cases rtree with
+        | leaf =>
+          have : (leaf : BinaryTree α) = leaf ↔ (leaf : BinaryTree α) = leaf := by simp
+          exact Full.cons leaf leaf x Full.nil Full.nil this
+        | node ll vv rr =>
+          -- We can show by contradiction that `h` is impossible
+          simp [isFull] at h
+      | node l1 v1 r1 =>
+        cases rtree with
+        | leaf => simp [isFull] at h
+        | node ll vv rr =>
+          -- Need Full (node l1 v1 r1) and Full (node ll vv rr)
+          -- and node l1 v1 r1 = leaf ↔ node ll vv rr (this is easy to prove)
+          have claim1 : Full (node l1 v1 r1) := by simp_all [isFull]
+          have claim2 : Full (node ll vv rr) := by simp_all [isFull]
+          have claim3 : node l1 v1 r1 = leaf ↔ node ll vv rr = leaf := by simp
+          exact Full.cons (l1.node v1 r1) (ll.node vv rr) x claim1 claim2 claim3
+  -- Prove .mpr
+  show t.Full → t.isFull = true
+  · intro h
+    induction h with
+    | nil => simp [isFull]
+    | cons ltree rtree x hl hr ih_leaf ih_l ih_r =>
+      simp [isFull, ih_l, ih_r]
+      cases ltree with
+      | leaf =>
+        cases rtree with
+        | leaf => simp
+        | node ll vv rr => simp at ih_leaf ih_l
+      | node l1 v1 r1 =>
+        cases rtree with
+        | leaf => simp at ih_leaf ih_l
+        | node ll vv rr => simp
+
+-- 20. The number of leaves in a full binary tree is one more than the number of internal nodes.
+theorem BinaryTree.num_leaf_in_full_tree [DecidableEq α] (t : BinaryTree α)
+  (h : isFull t = true) : numLeaves t = size t + 1 := by
+  rw [is_full_correct] at h
+  induction t with
+  | leaf => rfl
+  | node ltree x rtree ihl ihr =>
+    sorry
+
 end BinTreeFacts
 
 end BinTree
