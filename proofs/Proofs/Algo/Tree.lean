@@ -265,6 +265,17 @@ theorem BinaryTree.is_full_correct [DecidableEq α] {t : BinaryTree α} : isFull
         | leaf => simp at ih_leaf ih_l
         | node ll vv rr => simp
 
+-- Prove that if Full (node ltree x rtree) then Full ltree AND Full rtree
+lemma BinaryTree.full_node_imp_full_lr [DecidableEq α] {ltree rtree : BinaryTree α} {x : α}
+  (h : Full (node ltree x rtree)) : Full ltree ∧ Full rtree := by
+  constructor
+  show ltree.Full
+  · cases h with
+    | cons ltree rtree x ihl ihr ih_leaf => exact ihl
+  show rtree.Full
+  · cases h with
+    | cons ltree rtree x ihl ihr ih_leaf => exact ihr
+
 -- 20. The number of leaves in a full binary tree is one more than the number of internal nodes.
 theorem BinaryTree.num_leaf_in_full_tree [DecidableEq α] (t : BinaryTree α)
   (h : isFull t = true) : numLeaves t = size t + 1 := by
@@ -272,7 +283,13 @@ theorem BinaryTree.num_leaf_in_full_tree [DecidableEq α] (t : BinaryTree α)
   induction t with
   | leaf => rfl
   | node ltree x rtree ihl ihr =>
-    sorry
+    rw [numLeaves, size]
+    -- Need Full ltree and Full rtree
+    -- Intuitively this is true, since Full (node ltree x rtree), this implies claim
+    have claim : Full ltree ∧ Full rtree := by exact full_node_imp_full_lr h
+    obtain ihl := ihl claim.left
+    obtain ihr := ihr claim.right
+    rw [ihl, ihr, Nat.add_comm ltree.size, ← Nat.add_assoc]
 
 end BinTreeFacts
 
