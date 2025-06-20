@@ -10,6 +10,8 @@ inductive BinaryTree (α : Type*) where
   | leaf : BinaryTree α
   | node : BinaryTree α → α → BinaryTree α → BinaryTree α
 
+variable {btree : BinaryTree α} {val : α} {left right : BinaryTree α}
+
 section BinTreeFacts
 
 /-
@@ -44,6 +46,44 @@ inductive BinaryTree (α : Type*) where
 
 **Have fun proving :3**
 -/
+
+-- Compute the size of a binary tree.
+def BinaryTree.size : BinaryTree α → Nat
+  | BinaryTree.leaf => 0 -- By definition, leaves have size zero.
+  | BinaryTree.node left _ right => 1 + BinaryTree.size left + BinaryTree.size right -- Size is one plus the size of left and right subtrees.
+
+-- Compute the depth of a binary tree.
+def BinaryTree.depth : BinaryTree α → Nat
+  | BinaryTree.leaf => 0 -- Depth of a leaf is zero.
+  | BinaryTree.node left _ right => 1 + max (BinaryTree.depth left) (BinaryTree.depth right) -- Depth is one plus the maximum depth of left and right subtrees.
+
+-- 1. The size of a leaf is zero.
+theorem BinaryTree.leaf_size [DecidableEq α] : size (leaf : BinaryTree α) = 0 := by rfl
+
+-- 2. The size of a node is one plus the size of its left and right subtrees.
+theorem BinaryTree.node_size [DecidableEq α] (left : BinaryTree α) (val : α) (right: BinaryTree α) :
+  size (node left val right) = 1 + size left + size right := by rfl
+
+-- 3. All leaf values are structurally equal — there’s only one leaf.
+theorem BinaryTree.leaf_unique [DecidableEq α] (t1 t2 : BinaryTree α) (h1 : t1 = leaf) (h2 : t2 = leaf) : t1 = t2 := by
+  rw [h1, h2]
+
+-- Swap the subtrees of a binary tree.
+def BinaryTree.swap : BinaryTree α → BinaryTree α
+  | leaf => leaf -- Swapping a leaf results in a leaf.
+  | node left val right => node right val left -- Swap the left and right subtrees.
+
+-- 4. Swapping the left and right subtrees of a node twice gives back the original tree.
+theorem BinaryTree.double_swap [DecidableEq α] (t : BinaryTree α) : swap (swap t) = t := by
+  induction t with
+  | leaf => rfl
+  | node left val right ih_left ih_right => rw [← ih_left, ← ih_right, swap, swap]
+
+-- 5. The depth of any tree is always greater than or equal to zero.
+theorem BinaryTree.depth_nonneg [DecidableEq α] (t : BinaryTree α) : depth t ≥ 0 := by
+  induction t with
+  | leaf => rfl
+  | node left val right ih_left ih_right => simp
 
 end BinTreeFacts
 
