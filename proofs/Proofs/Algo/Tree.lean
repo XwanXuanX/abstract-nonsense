@@ -73,6 +73,21 @@ def BinaryTree.swap : BinaryTree α → BinaryTree α
   | leaf => leaf -- Swapping a leaf results in a leaf.
   | node left val right => node right val left -- Swap the left and right subtrees.
 
+-- Obtain the left subtree of a binary tree.
+def BinaryTree.getLeft : BinaryTree α → BinaryTree α
+  | leaf => leaf -- The left subtree of a leaf is a leaf.
+  | node left _ _ => left -- The left subtree of a node is its left child
+
+-- Obtain the right subtree of a binary tree.
+def BinaryTree.getRight : BinaryTree α → BinaryTree α
+  | leaf => leaf -- The right subtree of a leaf is a leaf.
+  | node _ _ right => right -- The right subtree of a node is its right child
+
+-- Obtain the value of a binary tree node.
+def BinaryTree.getVal : BinaryTree α → Option α
+  | leaf => none -- A leaf has no value.
+  | node _ val _ => some val -- A node has a value.
+
 -- 4. Swapping the left and right subtrees of a node twice gives back the original tree.
 theorem BinaryTree.double_swap [DecidableEq α] (t : BinaryTree α) : swap (swap t) = t := by
   induction t with
@@ -84,6 +99,29 @@ theorem BinaryTree.depth_nonneg [DecidableEq α] (t : BinaryTree α) : depth t �
   induction t with
   | leaf => rfl
   | node left val right ih_left ih_right => simp
+
+-- 7. If two binary trees are equal, then their left subtrees, values, and right subtrees must also be equal.
+theorem BinaryTree.eq_of_eq [DecidableEq α] {t1 t2 : BinaryTree α} :
+  t1 = t2 ↔ (getLeft t1 = getLeft t2) ∧ (getRight t1 = getRight t2) ∧ (getVal t1 = getVal t2) := by
+  constructor
+  · -- Prove if trees are equal, their components are equal.
+    intro h; rw [h]
+    constructor; rfl; constructor; rfl; rfl
+  · -- Prove if components are equal, trees are equal.
+    intro h
+    obtain ⟨h_left, h_right, h_val⟩ := h
+    -- Enumerate the cases for t1 and t2.
+    cases t1 with
+    | leaf =>
+      cases t2 with
+      | leaf => rfl
+      | node l2 v2 r2 => contradiction
+    | node l1 v1 r1 =>
+      cases t2 with
+      | leaf => contradiction
+      | node l2 v2 r2 =>
+        simp [getLeft, getRight, getVal] at h_left h_right h_val
+        rw [h_left, h_right, h_val]
 
 end BinTreeFacts
 
