@@ -291,6 +291,36 @@ theorem BinaryTree.num_leaf_in_full_tree [DecidableEq α] (t : BinaryTree α)
     obtain ihr := ihr claim.right
     rw [ihl, ihr, Nat.add_comm ltree.size, ← Nat.add_assoc]
 
+-- Prove that the maximum number of nodes at depth d in any binary tree is 2^d (where d = 0 is root).
+-- Restate the definition as: size of a binary tree is bounded by 2^(depth t) - 1
+theorem BinaryTree.max_nodes_at_depth [DecidableEq α] (t : BinaryTree α) : size t < 2 ^ (depth t) := by
+  induction t with
+  | leaf => simp [size, depth]
+  | node ltree x rtree ihl ihr =>
+    simp [size, depth]
+    have claim1 : ∀ n : Nat, 2 ^ (1 + n) = 2 * 2 ^ n := by
+      intro n; simp [Nat.add_comm, ← Nat.succ_eq_add_one, Nat.pow_succ, Nat.mul_comm]
+    rw [claim1 (max ltree.depth rtree.depth)]
+    have claim2 : ∀ n m : Nat, 2 ^ (max n m) = max (2 ^ n) (2 ^ m) := by
+      intro n m;
+      by_cases hcase1 : n ≤ m
+      · simp [Nat.max_def, hcase1]
+        intro hcase2;
+        have hcase3 : m < n := by
+          exact (Nat.pow_lt_pow_iff_right (by decide)).mp hcase2
+        linarith
+      · push_neg at hcase1
+        simp [Nat.max_def, hcase1, if_neg]
+        intro hcase2;
+        exfalso
+        have hcase3 : n ≤ m := by
+          exact (Nat.pow_le_pow_iff_right (by decide : 1 < 2)).mp hcase2
+        linarith
+    rw [claim2 ltree.depth rtree.depth]
+    -- Finally, we isolated the 2 ^ (depth t) term
+    -- TODO: complete the proof
+    sorry
+
 end BinTreeFacts
 
 end BinTree
