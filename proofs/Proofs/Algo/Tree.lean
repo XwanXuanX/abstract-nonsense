@@ -347,6 +347,11 @@ def BinaryTree.contains [DecidableEq α] : α → BinaryTree α → Prop
   | _, leaf => false -- A leaf cannot contain any value.
   | x, node l v r => x = v ∨ contains x l ∨ contains x r
 
+-- Define the number of operations needed to traverse a binary tree with inorder.
+def BinaryTree.inorder_time [DecidableEq α] : BinaryTree α → Nat
+  | leaf => 0 -- Traversing a leaf takes no time.
+  | node left _ right => 1 + inorder_time left + inorder_time right
+
 -- Prove that inorder traversal of a binary tree contains all its values.
 -- that is, if traverse from the root, then it's guaranteed to visit all nodes.
 theorem BinaryTree.inorder_visits_all_nodes [DecidableEq α] (x : α)
@@ -372,6 +377,28 @@ theorem BinaryTree.inorder_visits_all_nodes [DecidableEq α] (x : α)
       rcases h with ha | hb | hc
       /- ha:                      hb:             hc:                     -/
       right; left; exact ihl ha; left; exact hb; right; right; exact ihr hc
+
+-- Prove that inorder traversal has a tight bound of O(n)
+theorem BinaryTree.inorder_time_bound [DecidableEq α] (t : BinaryTree α) :
+  ∃ (C₁ C₂ D₁ D₂ : ℕ), C₁ * size t + D₁ ≤ inorder_time t ∧ inorder_time t ≤ C₂ * size t + D₂ := by
+  use 1, 1, 0, 0 -- Constants for the big-O bound
+  have claim1 (a b c d : Nat) (h1 : a ≤ b) (h2 : c ≤ d) : a + c ≤ b + d := by
+    exact Nat.add_le_add h1 h2
+  constructor
+  · -- Prove the lower bound
+    simp [inorder_time, size]
+    induction t with
+    | leaf => simp [inorder_time, size]
+    | node ltree v rtree ihl ihr =>
+      simp [inorder_time, size, Nat.add_assoc]
+      exact claim1 ltree.size ltree.inorder_time rtree.size rtree.inorder_time ihl ihr
+  · -- Prove the upper bound
+    simp [inorder_time, size]
+    induction t with
+    | leaf => simp [inorder_time, size]
+    | node ltree v rtree ihl ihr =>
+      simp [inorder_time, size, Nat.add_assoc]
+      exact claim1 ltree.inorder_time ltree.size rtree.inorder_time rtree.size ihl ihr
 
 end BinTreeAlgos
 
