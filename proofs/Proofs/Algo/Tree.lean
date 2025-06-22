@@ -316,10 +316,11 @@ theorem BinaryTree.max_nodes_at_depth [DecidableEq α] (t : BinaryTree α) : siz
         have hcase3 : n ≤ m := by
           exact (Nat.pow_le_pow_iff_right (by decide : 1 < 2)).mp hcase2
         linarith
-    rw [claim2 ltree.depth rtree.depth]
+    rw [claim2 ltree.depth rtree.depth, Nat.max_def]
     -- Finally, we isolated the 2 ^ (depth t) term
-    -- TODO: complete the proof
-    sorry
+    by_cases hcase1 : 2 ^ ltree.depth ≤ 2 ^ rtree.depth
+    · simp [hcase1]; linarith [ihr, ihl]
+    · simp [hcase1]; linarith [ihr, ihl]
 
 end BinTreeFacts
 
