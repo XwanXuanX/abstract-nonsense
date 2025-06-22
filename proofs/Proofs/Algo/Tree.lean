@@ -1,5 +1,6 @@
 import Mathlib.Data.List.Basic
 import Mathlib.Data.Nat.Basic
+import Mathlib.Data.Finset.Basic
 import Mathlib.Tactic
 
 namespace BinTree
@@ -323,5 +324,55 @@ theorem BinaryTree.max_nodes_at_depth [DecidableEq α] (t : BinaryTree α) : siz
     · simp [hcase1]; linarith [ihr, ihl]
 
 end BinTreeFacts
+
+section BinTreeAlgos
+
+-- Typical inorder traversal algorithm for binary trees.
+def BinaryTree.inorder [DecidableEq α] : BinaryTree α → Finset α
+  | leaf => ∅
+  | node left val right => inorder left ∪ {val} ∪ inorder right
+
+-- Typical preorder traversal algorithm for binary trees.
+def BinaryTree.preorder [DecidableEq α] : BinaryTree α → Finset α
+  | leaf => ∅
+  | node left val right => {val} ∪ preorder left ∪ preorder right
+
+-- Typical postorder traversal algorithm for binary trees.
+def BinaryTree.postorder [DecidableEq α] : BinaryTree α → Finset α
+  | leaf => ∅
+  | node left val right => postorder left ∪ postorder right ∪ {val}
+
+-- Define membership for a node in a binary tree.
+def BinaryTree.contains [DecidableEq α] : α → BinaryTree α → Prop
+  | _, leaf => false -- A leaf cannot contain any value.
+  | x, node l v r => x = v ∨ contains x l ∨ contains x r
+
+-- Prove that inorder traversal of a binary tree contains all its values.
+-- that is, if traverse from the root, then it's guaranteed to visit all nodes.
+theorem BinaryTree.inorder_visits_all_nodes [DecidableEq α] (x : α)
+  (t : BinaryTree α) : contains x t ↔ x ∈ inorder t := by
+  constructor
+  -- Prove the forward direction
+  show contains x t → x ∈ inorder t
+  · intro h
+    induction t with
+    | leaf => contradiction
+    | node ltree v rtree ihl ihr =>
+      simp_all [contains, inorder]
+      rcases h with ha | hb | hc
+      /- ha:                  hb:                 hc:                     -/
+      right; left; exact ha; left; exact ihl hb; right; right; exact ihr hc
+  -- Prove the reverse direction
+  show x ∈ inorder t → contains x t
+  · intro h
+    induction t with
+    | leaf => contradiction
+    | node ltree v rtree ihl ihr =>
+      simp_all [contains, inorder]
+      rcases h with ha | hb | hc
+      /- ha:                      hb:             hc:                     -/
+      right; left; exact ihl ha; left; exact hb; right; right; exact ihr hc
+
+end BinTreeAlgos
 
 end BinTree
