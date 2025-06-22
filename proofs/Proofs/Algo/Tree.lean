@@ -400,6 +400,18 @@ theorem BinaryTree.inorder_time_bound [DecidableEq α] (t : BinaryTree α) :
       simp [inorder_time, size, Nat.add_assoc]
       exact claim1 ltree.inorder_time ltree.size rtree.inorder_time rtree.size ihl ihr
 
+-- In a binary tree, there is a unique path between the root and any given node.
+-- TODO: Prove this fact
+
+-- In any tree with n nodes, there are n − 1 edges.
+-- TODO: Prove this fact
+
+-- The number of distinct binary trees with n nodes is the ( n )th Catalan number.
+-- TODO: Prove this fact
+
+-- The sum of the depths of all leaves in a perfect binary tree of height h is (h + 1) ⋅ 2h.
+-- TODO: Prove this fact
+
 end BinTreeAlgos
 
 end BinTree
