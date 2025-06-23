@@ -347,6 +347,36 @@ def BinaryTree.contains [DecidableEq α] : α → BinaryTree α → Prop
   | _, leaf => false -- A leaf cannot contain any value.
   | x, node l v r => x = v ∨ contains x l ∨ contains x r
 
+-- This version of `contains` is decidable.
+def BinaryTree.contains' [DecidableEq α] : α → BinaryTree α → Bool
+  | _, leaf => false
+  | x, node l v r => if x = v then true else contains' x l || contains' x r
+
+-- Prove that the `contains` function is correct.
+theorem BinaryTree.contains'_iff_contains [DecidableEq α] (x : α) (t : BinaryTree α) :
+  contains' x t = true ↔ contains x t := by
+  constructor
+  show contains' x t = true → contains x t
+  · intro h
+    induction t with
+    | leaf => contradiction
+    | node l v r ihl ihr =>
+      simp_all [contains', contains]
+      rcases h with ha | hb | hc
+      · left; exact ha -- x = v
+      · right; left; exact ihl hb -- x ∈ left subtree
+      · right; right; exact ihr hc -- x ∈ right subtree
+  show contains x t → contains' x t = true
+  · intro h
+    induction t with
+    | leaf => contradiction
+    | node l v r ihl ihr =>
+      simp_all [contains', contains]
+      rcases h with ha | hb | hc
+      · left; exact ha -- x = v
+      · right; left; exact ihl hb -- x ∈ left subtree
+      · right; right; exact ihr hc -- x ∈ right subtree
+
 -- Define the number of operations needed to traverse a binary tree with inorder.
 def BinaryTree.inorder_time [DecidableEq α] : BinaryTree α → Nat
   | leaf => 0 -- Traversing a leaf takes no time.
@@ -401,6 +431,59 @@ theorem BinaryTree.inorder_time_bound [DecidableEq α] (t : BinaryTree α) :
       exact claim1 ltree.inorder_time ltree.size rtree.inorder_time rtree.size ihl ihr
 
 -- In a binary tree, there is a unique path between the root and any given node.
+
+-- Represent a path from root to a node as a sequence of left and right turns.
+inductive BinaryTree.Dir : Type
+  | left | right
+  deriving DecidableEq, Repr
+
+abbrev BinaryTree.Path := List BinaryTree.Dir
+
+-- Define a function to find the node given a path from the root.
+def BinaryTree.follow_path [DecidableEq α] (t : BinaryTree α) (path : Path) : Option α :=
+  match t, path with
+  | leaf, _ => none
+  | node _ v _, [] => some v
+  | node l _ _, Dir.left :: rest => follow_path l rest
+  | node _ _ r, Dir.right :: rest => follow_path r rest
+
+-- Define a function to produce a path from the root to a node.
+def BinaryTree.search_path [DecidableEq α] (t : BinaryTree α) (v : α) : Option Path :=
+  if contains' v t then
+    let rec search (cur : BinaryTree α) (p : Path) : Path :=
+      match cur with
+      | leaf => unreachable!
+      | node ltree val rtree =>
+        if val = v then p
+        else if contains' v ltree then search ltree (Dir.left :: p)
+        else if contains' v rtree then search rtree (Dir.right :: p)
+        else unreachable!
+    search t []
+  else
+    none -- If the value is not in the tree, return none.
+
+-- Formalize the statement: there **exists** a **unique** path betwen the root and any given node.
+theorem BinaryTree.exists_unique_path [DecidableEq α] (t : BinaryTree α) (v : α) :
+  contains v t → ∃! p : Path, follow_path t p = some v := by
+  intro h
+  rw [ExistsUnique]
+
+  let ppath : Option Path := search_path t v
+  -- Proves that ppath is valid given h
+  have contains_path (h : contains v t) : ppath.isSome := by
+    unfold ppath; unfold search_path
+    simp [(contains'_iff_contains v t).mpr h]
+  have option_isSome_iff_exists (o : Option Path) : o.isSome ↔ ∃ x, o = some x := by
+    cases o <;> simp
+  obtain ⟨path, hpath⟩ := (option_isSome_iff_exists ppath).mp (contains_path h)
+  use path
+
+  constructor
+  show t.follow_path path = some v
+  · sorry
+  show ∀ (y : Path), t.follow_path y = some v → y = path
+  · sorry
+
 -- TODO: Prove this fact
 
 -- In any tree with n nodes, there are n − 1 edges.
