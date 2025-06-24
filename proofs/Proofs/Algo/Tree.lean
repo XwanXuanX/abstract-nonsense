@@ -511,12 +511,6 @@ def exampleTree : BinaryTree Nat :=
 
 end Testcases
 
-
-/- --------------------------------------------------------------------------------------------- -/
-/-                                    WORK UNDER CONSTRUCTION                                    -/
-/- --------------------------------------------------------------------------------------------- -/
-
-
 -- Prove the correctness of the `search_path` function.
 theorem BinaryTree.search_path_correct
   [DecidableEq α] (t : BinaryTree α) (v : α) (p₀ p : Path)
@@ -527,41 +521,56 @@ by
   | leaf => contradiction
   | node ltree val rtree ihl ihr =>
     unfold contains' at h2; simp at h2
+
+    have claim1 (h : v = val)
+      : ∃ q, p = p₀ ++ q ∧ (ltree.node val rtree).follow_path q = some v :=
+    by
+      unfold search_path.search at h1
+      unfold follow_path;
+      simp_all [h]
+
+    have claim2 (hc1 : v ≠ val) (hc2 : contains' v ltree = true)
+      : ∃ q, p = p₀ ++ q ∧ (ltree.node val rtree).follow_path q = some v :=
+    by
+      unfold search_path.search at h1
+      simp [hc1.symm, hc2] at h1
+      obtain ihl := ihl (p₀ ++ [Dir.left]) p h1 hc2
+      obtain ⟨q, ihlq⟩ := ihl
+      rcases ihlq with ⟨ihlq1, ihl12⟩
+      use ([Dir.left] ++ q)
+      constructor
+      · simp_all
+      · simp; unfold follow_path
+        exact ihl12
+
     rcases h2 with ha | hb | hc
     · -- Case when v = val
-      unfold search_path.search at h1
-      unfold follow_path
-      simp_all [ha]
+      exact claim1 ha
 
     · -- Case when v ∈ left subtree
       unfold search_path.search at h1
       simp [hb] at h1
       by_cases hcase : val = v
-      · -- If v = val, then it's the same as the previous case
-        unfold search_path.search at h1
-        unfold follow_path
-        simp_all [hcase]
+      · exact claim1 hcase.symm
       · -- If v ≠ val, then we need to search in the left subtree
-        simp [hcase] at h1
-        obtain ihl := ihl (p₀ ++ [Dir.left]) p h1 hb
-        sorry -- TODO: Prove this claim
+        exact claim2 (fun a ↦ hcase (id (Eq.symm a))) hb
 
     · -- Case when v ∈ right subtree
       unfold search_path.search at h1
       by_cases hcase : val = v
-      · -- If v = val, then it's the same as the previous case
-        unfold search_path.search at h1
-        unfold follow_path
-        simp_all [hcase]
-      · -- If v ≠ val, then we need to search in the right subtree
-        simp [hcase] at h1
+      · exact claim1 hcase.symm
+      · simp [hcase] at h1
         by_cases hcase1 : contains' v ltree = true
-        · simp [hcase1] at h1
-          obtain ihl := ihl (p₀ ++ [Dir.left]) p h1 hcase1
-          sorry -- TODO: Prove this claim
+        · exact claim2 (fun a ↦ hcase (id (Eq.symm a))) hcase1
         · simp [hcase1] at h1
           obtain ihr := ihr (p₀ ++ [Dir.right]) p h1 hc
-          sorry -- TODO: Prove this claim
+          obtain ⟨q, ihrq⟩ := ihr
+          rcases ihrq with ⟨ihrq1, ihr12⟩
+          use ([Dir.right] ++ q)
+          constructor
+          · simp_all
+          · simp; unfold follow_path
+            exact ihr12
 
 
 /- --------------------------------------------------------------------------------------------- -/
@@ -585,12 +594,10 @@ theorem BinaryTree.exists_unique_path [DecidableEq α] (t : BinaryTree α) (v : 
     | node ltree val rtree ihl ihr =>
       unfold contains at h
       rcases h with ha | hb | hc
-      · unfold search_path.search
-        simp [ha]
-      · obtain ihl := ihl hb hb
-        simp_all [search_path.search, ihl]
+      ·
         sorry
-      sorry
+      · sorry
+      · sorry
 
   have option_isSome_iff_exists (o : Option Path) : o.isSome ↔ ∃ x, o = some x := by
     cases o <;> simp
