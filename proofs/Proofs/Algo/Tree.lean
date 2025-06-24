@@ -518,23 +518,21 @@ end Testcases
 
 
 -- Prove the correctness of the `search_path` function.
-theorem BinaryTree.search_path_correct [DecidableEq α] (t : BinaryTree α) (v : α) (p : Path)
-  (h1 : search_path.search t v [] = some p) (h2 : contains' v t = true) : follow_path t p = some v :=
+theorem BinaryTree.search_path_correct
+  [DecidableEq α] (t : BinaryTree α) (v : α) (p₀ p : Path)
+  (h1 : search_path.search t v p₀ = some p) (h2 : contains' v t = true)
+  : ∃ q, p = p₀ ++ q ∧ follow_path t q = some v :=
 by
-  induction t generalizing p with
+  induction t generalizing p p₀ with
   | leaf => contradiction
   | node ltree val rtree ihl ihr =>
     unfold contains' at h2; simp at h2
-    have claim_left (hclaim : search_path.search ltree v [Dir.left] = some p)
-      : ∃ p', p = Dir.left :: p' ∧ search_path.search ltree v [] = some p' :=
-    by
-      sorry
-
     rcases h2 with ha | hb | hc
     · -- Case when v = val
-      unfold search_path.search at h1;
+      unfold search_path.search at h1
       unfold follow_path
       simp_all [ha]
+
     · -- Case when v ∈ left subtree
       unfold search_path.search at h1
       simp [hb] at h1
@@ -545,13 +543,11 @@ by
         simp_all [hcase]
       · -- If v ≠ val, then we need to search in the left subtree
         simp [hcase] at h1
-        obtain ihl := ihl p.tail (claim_left h1) hb
-        -- Assumption: ihl : ltree.follow_path (List.tail p) = some v
-        show (ltree.node val rtree).follow_path p = some v
+        obtain ihl := ihl (p₀ ++ [Dir.left]) p h1 hb
         sorry -- TODO: Prove this claim
+
     · -- Case when v ∈ right subtree
       unfold search_path.search at h1
-      simp [hc] at h1
       by_cases hcase : val = v
       · -- If v = val, then it's the same as the previous case
         unfold search_path.search at h1
@@ -561,16 +557,10 @@ by
         simp [hcase] at h1
         by_cases hcase1 : contains' v ltree = true
         · simp [hcase1] at h1
-          obtain ihl := ihl p.tail (claim_left h1) hcase1
-          show (ltree.node val rtree).follow_path p = some v
+          obtain ihl := ihl (p₀ ++ [Dir.left]) p h1 hcase1
           sorry -- TODO: Prove this claim
         · simp [hcase1] at h1
-          have claim_right : search_path.search rtree v [] = some p.tail := by
-            show search_path.search rtree v [] = some (List.tail p)
-            sorry -- TODO: Prove this claim
-          obtain ihr := ihr p.tail claim_right hc
-          -- Assumption: ihr : rtree.follow_path (List.tail p) = some v
-          show (ltree.node val rtree).follow_path p = some v
+          obtain ihr := ihr (p₀ ++ [Dir.right]) p h1 hc
           sorry -- TODO: Prove this claim
 
 
