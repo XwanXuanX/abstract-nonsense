@@ -454,12 +454,62 @@ def BinaryTree.search_path [DecidableEq α] (t : BinaryTree α) (v : α) : Optio
       match cur with
       | leaf => none
       | node ltree val rtree =>
-        if val = v then some p.reverse
-        else if contains' v ltree then search ltree v (Dir.left :: p)
-        else search rtree v (Dir.right :: p)
+        if val = v then some p
+        else if contains' v ltree then search ltree v (p ++ [Dir.left])
+        else search rtree v (p ++ [Dir.right])
     search t v [] -- Start searching from the root with an empty path.
   else
     none -- If the value is not in the tree, return none.
+
+section Testcases
+
+open BinaryTree
+open BinaryTree.Dir
+
+/-
+`exampleTree` looks like this:
+
+        4
+      /   \
+     2     5
+    / \     \
+   1   3     6
+
+-/
+
+def exampleTree : BinaryTree Nat :=
+  node
+    (node
+      (node leaf 1 leaf)
+      2
+      (node leaf 3 leaf))
+    4
+    (node
+      leaf
+      5
+      (node leaf 6 leaf))
+
+-- Check correctness of `search_path`
+#eval search_path exampleTree 1 = some [left, left]
+#eval search_path exampleTree 2 = some [left]
+#eval search_path exampleTree 3 = some [left, right]
+#eval search_path exampleTree 4 = some []
+#eval search_path exampleTree 5 = some [right]
+#eval search_path exampleTree 6 = some [right, right]
+#eval search_path exampleTree 7 = none
+
+-- Check correctness of `follow_path` as an inverse to `search_path`
+#eval follow_path exampleTree (search_path exampleTree 1).get! = some 1
+#eval follow_path exampleTree (search_path exampleTree 2).get! = some 2
+#eval follow_path exampleTree (search_path exampleTree 3).get! = some 3
+#eval follow_path exampleTree (search_path exampleTree 4).get! = some 4
+#eval follow_path exampleTree (search_path exampleTree 5).get! = some 5
+#eval follow_path exampleTree (search_path exampleTree 6).get! = some 6
+
+-- By inspection, `search_path` and `follow_path` seems to be correct
+-- Thus, we should keep searching for ways to prove them
+
+end Testcases
 
 
 /- --------------------------------------------------------------------------------------------- -/
@@ -476,10 +526,9 @@ by
   | node ltree val rtree ihl ihr =>
     unfold contains' at h2; simp at h2
     have claim_left (hclaim : search_path.search ltree v [Dir.left] = some p)
-      : search_path.search ltree v [] = some p.tail :=
+      : ∃ p', p = Dir.left :: p' ∧ search_path.search ltree v [] = some p' :=
     by
-      show search_path.search ltree v [] = some (List.tail p)
-      sorry -- TODO: Prove this claim
+      sorry
 
     rcases h2 with ha | hb | hc
     · -- Case when v = val
