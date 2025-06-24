@@ -572,6 +572,50 @@ by
           · simp; unfold follow_path
             exact ihr12
 
+-- Prove that if a value is contained in the tree, then search_path returns a valid path.
+lemma BinaryTree.path_valid [DecidableEq α] (t : BinaryTree α) (v : α) (h : contains v t)
+  : (search_path.search t v []).isSome := by
+  induction t with
+  | leaf => simp [contains] at h
+  | node ltree val rtree ihl ihr =>
+    unfold contains at h
+
+    have search_append_monotonic [DecidableEq α] (t : BinaryTree α) (v : α) (p q : Path)
+      : (search_path.search t v p).isSome = true → (search_path.search t v (q ++ p)).isSome = true :=
+    by
+      intro h1
+      induction t generalizing p with
+      | leaf => contradiction
+      | node ltree val rtree ihl ihr =>
+        unfold search_path.search at h1
+        unfold search_path.search
+        by_cases hcase1 : v = val
+        · simp_all [hcase1]
+        · push_neg at hcase1
+          by_cases hcase2 : contains' v ltree = true
+          · simp_all [hcase1.symm, hcase2]
+          · simp_all [hcase1.symm, hcase2]
+
+    rcases h with ha | hb | hc
+    · unfold search_path.search; simp [ha]
+    · obtain ihl := ihl hb
+      unfold search_path.search
+      by_cases hcase1 : val = v
+      · simp [hcase1]
+      · simp [hcase1, hb, contains'_iff_contains]
+        exact search_append_monotonic ltree v [] [Dir.left] ihl
+    · obtain ihr := ihr hc
+      unfold search_path.search
+      by_cases hcase1 : val = v
+      · simp [hcase1]
+      · simp [hcase1]
+        by_cases hcase2 : contains' v ltree = true
+        · simp [hcase2]
+          obtain ihl := ihl ((contains'_iff_contains _ _).mp hcase2)
+          exact search_append_monotonic ltree v [] [Dir.left] ihl
+        · simp [hcase2]
+          exact search_append_monotonic rtree v [] [Dir.right] ihr
+
 
 /- --------------------------------------------------------------------------------------------- -/
 /-                                    WORK UNDER CONSTRUCTION                                    -/
@@ -585,29 +629,22 @@ theorem BinaryTree.exists_unique_path [DecidableEq α] (t : BinaryTree α) (v : 
   rw [ExistsUnique]
 
   let ppath : Option Path := search_path.search t v []
-  -- Proves that ppath is valid given h
-  have contains_path (h : contains v t) : ppath.isSome := by
-    unfold ppath; unfold search_path.search
-    simp
-    sorry
-
   have option_isSome_iff_exists (o : Option Path) : o.isSome ↔ ∃ x, o = some x := by
     cases o <;> simp
-  obtain ⟨path, hpath⟩ := (option_isSome_iff_exists ppath).mp (contains_path h)
+  obtain ⟨path, hpath⟩ := (option_isSome_iff_exists ppath).mp (path_valid _ _ h)
   use path
 
   constructor
   show t.follow_path path = some v
   · -- Prove that the path exists
     unfold ppath at hpath
-    simp_all [h, contains'_iff_contains]
     have claim1 := search_path_correct t v [] path hpath ((contains'_iff_contains v t).mpr h)
     obtain ⟨path, claim1, claim2⟩ := claim1
     simp_all [claim1]
 
   show ∀ (y : Path), t.follow_path y = some v → y = path
   · -- Prove that the path is unique
-    sorry
+    sorry -- TODO: Prove this fact
 
 -- TODO: Prove this fact
 
