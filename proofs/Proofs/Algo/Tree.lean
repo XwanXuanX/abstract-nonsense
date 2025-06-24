@@ -450,17 +450,85 @@ def BinaryTree.follow_path [DecidableEq α] (t : BinaryTree α) (path : Path) : 
 -- Define a function to produce a path from the root to a node.
 def BinaryTree.search_path [DecidableEq α] (t : BinaryTree α) (v : α) : Option Path :=
   if contains' v t then
-    let rec search (cur : BinaryTree α) (p : Path) : Path :=
+    let rec search (cur : BinaryTree α) (v : α) (p : Path) : Option Path :=
       match cur with
-      | leaf => unreachable!
+      | leaf => none
       | node ltree val rtree =>
-        if val = v then p
-        else if contains' v ltree then search ltree (Dir.left :: p)
-        else if contains' v rtree then search rtree (Dir.right :: p)
-        else unreachable!
-    search t []
+        if val = v then some p.reverse
+        else if contains' v ltree then search ltree v (Dir.left :: p)
+        else search rtree v (Dir.right :: p)
+    search t v [] -- Start searching from the root with an empty path.
   else
     none -- If the value is not in the tree, return none.
+
+
+/- --------------------------------------------------------------------------------------------- -/
+/-                                    WORK UNDER CONSTRUCTION                                    -/
+/- --------------------------------------------------------------------------------------------- -/
+
+
+-- Prove the correctness of the `search_path` function.
+theorem BinaryTree.search_path_correct [DecidableEq α] (t : BinaryTree α) (v : α) (p : Path)
+  (h1 : search_path.search t v [] = some p) (h2 : contains' v t = true) : follow_path t p = some v :=
+by
+  induction t generalizing p with
+  | leaf => contradiction
+  | node ltree val rtree ihl ihr =>
+    unfold contains' at h2; simp at h2
+    have claim_left (hclaim : search_path.search ltree v [Dir.left] = some p)
+      : search_path.search ltree v [] = some p.tail :=
+    by
+      show search_path.search ltree v [] = some (List.tail p)
+      sorry -- TODO: Prove this claim
+
+    rcases h2 with ha | hb | hc
+    · -- Case when v = val
+      unfold search_path.search at h1;
+      unfold follow_path
+      simp_all [ha]
+    · -- Case when v ∈ left subtree
+      unfold search_path.search at h1
+      simp [hb] at h1
+      by_cases hcase : val = v
+      · -- If v = val, then it's the same as the previous case
+        unfold search_path.search at h1
+        unfold follow_path
+        simp_all [hcase]
+      · -- If v ≠ val, then we need to search in the left subtree
+        simp [hcase] at h1
+        obtain ihl := ihl p.tail (claim_left h1) hb
+        -- Assumption: ihl : ltree.follow_path (List.tail p) = some v
+        show (ltree.node val rtree).follow_path p = some v
+        sorry -- TODO: Prove this claim
+    · -- Case when v ∈ right subtree
+      unfold search_path.search at h1
+      simp [hc] at h1
+      by_cases hcase : val = v
+      · -- If v = val, then it's the same as the previous case
+        unfold search_path.search at h1
+        unfold follow_path
+        simp_all [hcase]
+      · -- If v ≠ val, then we need to search in the right subtree
+        simp [hcase] at h1
+        by_cases hcase1 : contains' v ltree = true
+        · simp [hcase1] at h1
+          obtain ihl := ihl p.tail (claim_left h1) hcase1
+          show (ltree.node val rtree).follow_path p = some v
+          sorry -- TODO: Prove this claim
+        · simp [hcase1] at h1
+          have claim_right : search_path.search rtree v [] = some p.tail := by
+            show search_path.search rtree v [] = some (List.tail p)
+            sorry -- TODO: Prove this claim
+          obtain ihr := ihr p.tail claim_right hc
+          -- Assumption: ihr : rtree.follow_path (List.tail p) = some v
+          show (ltree.node val rtree).follow_path p = some v
+          sorry -- TODO: Prove this claim
+
+
+/- --------------------------------------------------------------------------------------------- -/
+/-                                    WORK UNDER CONSTRUCTION                                    -/
+/- --------------------------------------------------------------------------------------------- -/
+
 
 -- Formalize the statement: there **exists** a **unique** path betwen the root and any given node.
 theorem BinaryTree.exists_unique_path [DecidableEq α] (t : BinaryTree α) (v : α) :
@@ -473,6 +541,18 @@ theorem BinaryTree.exists_unique_path [DecidableEq α] (t : BinaryTree α) (v : 
   have contains_path (h : contains v t) : ppath.isSome := by
     unfold ppath; unfold search_path
     simp [(contains'_iff_contains v t).mpr h]
+    induction t with
+    | leaf => contradiction
+    | node ltree val rtree ihl ihr =>
+      unfold contains at h
+      rcases h with ha | hb | hc
+      · unfold search_path.search
+        simp [ha]
+      · obtain ihl := ihl hb hb
+        simp_all [search_path.search, ihl]
+        sorry
+      sorry
+
   have option_isSome_iff_exists (o : Option Path) : o.isSome ↔ ∃ x, o = some x := by
     cases o <;> simp
   obtain ⟨path, hpath⟩ := (option_isSome_iff_exists ppath).mp (contains_path h)
@@ -480,7 +560,10 @@ theorem BinaryTree.exists_unique_path [DecidableEq α] (t : BinaryTree α) (v : 
 
   constructor
   show t.follow_path path = some v
-  · sorry
+  · unfold ppath at hpath
+    unfold search_path at hpath
+    simp [h, contains'_iff_contains] at hpath
+    sorry
   show ∀ (y : Path), t.follow_path y = some v → y = path
   · sorry
 
