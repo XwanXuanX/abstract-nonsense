@@ -584,20 +584,12 @@ theorem BinaryTree.exists_unique_path [DecidableEq α] (t : BinaryTree α) (v : 
   intro h
   rw [ExistsUnique]
 
-  let ppath : Option Path := search_path t v
+  let ppath : Option Path := search_path.search t v []
   -- Proves that ppath is valid given h
   have contains_path (h : contains v t) : ppath.isSome := by
-    unfold ppath; unfold search_path
-    simp [(contains'_iff_contains v t).mpr h]
-    induction t with
-    | leaf => contradiction
-    | node ltree val rtree ihl ihr =>
-      unfold contains at h
-      rcases h with ha | hb | hc
-      ·
-        sorry
-      · sorry
-      · sorry
+    unfold ppath; unfold search_path.search
+    simp
+    sorry
 
   have option_isSome_iff_exists (o : Option Path) : o.isSome ↔ ∃ x, o = some x := by
     cases o <;> simp
@@ -606,12 +598,16 @@ theorem BinaryTree.exists_unique_path [DecidableEq α] (t : BinaryTree α) (v : 
 
   constructor
   show t.follow_path path = some v
-  · unfold ppath at hpath
-    unfold search_path at hpath
-    simp [h, contains'_iff_contains] at hpath
-    sorry
+  · -- Prove that the path exists
+    unfold ppath at hpath
+    simp_all [h, contains'_iff_contains]
+    have claim1 := search_path_correct t v [] path hpath ((contains'_iff_contains v t).mpr h)
+    obtain ⟨path, claim1, claim2⟩ := claim1
+    simp_all [claim1]
+
   show ∀ (y : Path), t.follow_path y = some v → y = path
-  · sorry
+  · -- Prove that the path is unique
+    sorry
 
 -- TODO: Prove this fact
 
