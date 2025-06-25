@@ -749,7 +749,7 @@ by
       exact rtree_unique
 
 lemma BinaryTree.search_path_search_cons [DecidableEq α]
-  {t : BinaryTree α} {v : α} {d : Dir} {p p' : Path}
+  {t : BinaryTree α} {v : α} {p p' : Path} (d : Dir)
   : search_path.search t v (d :: p) = some (d :: p') ↔ search_path.search t v p = some p' :=
 by
   constructor
@@ -765,6 +765,53 @@ by
         by_cases hcase2 : contains' v lt = true
         · simp_all [search_path.search, hcase1.symm, hcase2]
         · simp_all [search_path.search, hcase1.symm, hcase2]
+
+/-
+It's not easy to see that `d` can only be `left` for all three hypothesis to hold.
+* `hpath` guarentees that one valid path is found
+* `hunq` guarantees that all values in the tree are unique
+* `hb` guarantees that the value is contained in the tree
+There are two cases:
+1. `d = left` - agrees with all hypothesis
+2. `d = right` - we start from empty accumulator, and we explore the right subtree.
+                 However, by `hunq` and `hb`, `v` cannot be in the right subtree,
+                 thus, we cannot find a valid path - contradicts to `hpath`.
+-/
+lemma BinaryTree.search_go_left [DecidableEq α] {ltree rtree : BinaryTree α} {val v : α} {p : Path} {d : Dir}
+  (hpath : search_path.search (node ltree val rtree) v [] = some (d :: p))
+  (hunq : (ltree.node val rtree).all_unique)
+  (hb : contains v ltree)
+  : search_path.search ltree v [] = some p :=
+by
+  cases d with
+  | left =>
+    simp [search_path.search] at hpath
+    -- Need to prove that val ≠ v from `hb`
+    by_cases hcase : val = v
+    · have h_val_notin_ltree := (v_notin_unq_lrtree ltree rtree val hunq).left
+      rw [hcase] at h_val_notin_ltree
+      contradiction
+    · simp [hcase, contains'_iff_contains, hb] at hpath
+      exact (search_path_search_cons Dir.left).mp hpath
+
+  | right =>
+    simp [search_path.search] at hpath
+    by_cases hcase : val = v
+    · simp [hcase] at hpath
+    · simp [hcase, contains'_iff_contains, hb] at hpath
+      -- Prove that ∃ q : Path, s.t. search ltree v [] = some q, and by .mpr of search_path_search_cons
+      -- We can can prove that search ltree v [Dir.left] = some (Dir.left :: q)
+      have h_exists_path : ∃ q : Path, search_path.search ltree v [] = some q := by
+        have claim := path_valid ltree v hb
+        exact Option.isSome_iff_exists.mp claim
+
+      obtain ⟨q, hq⟩ := h_exists_path
+      obtain hq' := (search_path_search_cons Dir.left).mpr hq
+
+      -- Now we have everything to prove a contradiction
+      by_cases hcase : p = q
+      · simp [hq'] at hpath
+      · simp [hq'] at hpath
 
 
 /- --------------------------------------------------------------------------------------------- -/
@@ -870,41 +917,20 @@ theorem BinaryTree.exists_unique_path [DecidableEq α] (t : BinaryTree α) (v : 
           cases y with
           | nil => simp_all [(hclaim [] _ hy)]
           | cons d' y' =>
-            -- Need to prove search_path.search ltree v [] = some path' from hpath and hb
-            have hsearch_go_left : search_path.search ltree v [] = some path' := by
-              cases d with
-              | left =>
-                simp [search_path.search] at hpath
-                -- Need to prove that val ≠ v from `hb`
-                by_cases hcase : val = v
-                · have h_val_notin_ltree := (v_notin_unq_lrtree ltree rtree val hunq).left
-                  rw [hcase] at h_val_notin_ltree
-                  contradiction
-                · simp [hcase, contains'_iff_contains, hb] at hpath
-                  exact search_path_search_cons.mp hpath
-              | right =>
-                simp [search_path.search] at hpath
-                by_cases hcase : val = v
-                · simp [hcase] at hpath
-                · simp [hcase, contains'_iff_contains, hb] at hpath
+
+            obtain ihl := ihl path' (search_go_left hpath hunq hb)
 
 
-
-
-                  sorry
-
-
-
-
-            obtain ihl := ihl path' hsearch_go_left
-
-
-
-            sorry
-
-
-
-        -- sorry
+            -- Case analysis on d and d'
+            cases d with
+            | left =>
+              cases d' with
+              | left => sorry
+              | right => sorry
+            | right =>
+              cases d' with
+              | left => sorry
+              | right => sorry
 
       /- ------------------------------------------------------------------- -/
       · -- Case when v ∈ right subtree
