@@ -833,7 +833,8 @@ by
 
 -- Formalize the statement: there **exists** a **unique** path betwen the root and any given node.
 theorem BinaryTree.exists_unique_path [DecidableEq α] (t : BinaryTree α) (v : α) (hunq : t.all_unique) :
-  contains v t → ∃! p : Path, follow_path t p = some v := by
+  contains v t → ∃! p : Path, follow_path t p = some v :=
+by
   intro h
   rw [ExistsUnique]
 
@@ -872,15 +873,14 @@ theorem BinaryTree.exists_unique_path [DecidableEq α] (t : BinaryTree α) (v : 
 
       /- ------------------------------------------------------------------- -/
       -- General facts about both subtrees
+      /- ------------------------------------------------------------------- -/
       obtain h_subtree_unique := whole_tree_unique_imp_subtree_unique ltree rtree val hunq
       obtain h_val_notin_subtree := v_notin_unq_lrtree ltree rtree val hunq
-
-      have hclaim (p : Path) (hp : p = []) (hb : contains v ltree)
-        (h : (ltree.node val rtree).follow_path p = some v) : False := by simp_all [follow_path, hp]
 
       rcases h with ha | hb | hc
       /- ------------------------------------------------------------------- -/
       · -- Case when v = val
+      /- ------------------------------------------------------------------- -/
         simp [← ha] at hx hy
 
         -- Prove contradiction when path = nil and y ≠ nil or vice versa
@@ -892,80 +892,48 @@ theorem BinaryTree.exists_unique_path [DecidableEq α] (t : BinaryTree α) (v : 
           contradiction
 
         -- Analyze the structure of the input paths
-        cases path with
-        | nil =>
-          cases y with
-          | nil => rfl
-          | cons d y' => simp_all [ha, hclaim]
-        | cons d path' =>
-          cases y with
-          | nil => simp_all [ha, hclaim]
-          | cons d' y' => simp_all [ha, hclaim]
+        cases path <;> cases y
+        case nil.nil => rfl
+        case nil.cons | cons.nil | cons.cons => simp_all [ha, hclaim]
 
       /- ------------------------------------------------------------------- -/
       · -- Case when v ∈ left subtree
+      /- ------------------------------------------------------------------- -/
         unfold ppath at hpath
         obtain ihl := ihl h_subtree_unique.left hb
 
+        have claim1 (p : Path) (hp : p = []) (hb : contains v ltree)
+          (h : (ltree.node val rtree).follow_path p = some v) : False := by simp_all [follow_path, hp]
 
-
-
-        have follow_prefix_left_path [DecidableEq α]  {p : Path} (h : (ltree.node val rtree).follow_path (Dir.left :: p) = some v)
+        have claim2 {p : Path} (h : (ltree.node val rtree).follow_path (Dir.left :: p) = some v)
           : ltree.follow_path p = some v := by simp_all [follow_path]
 
-        have claim_false {y' : Path} (hy : (ltree.node val rtree).follow_path (Dir.right :: y') = some v)
-          : False := by
-          simp [follow_path] at hy
-          have hy := follow_path_means_contains _ _ _ hy
+        have claim3 {p : Path} (h : (ltree.node val rtree).follow_path (Dir.right :: p) = some v) : False := by
+          simp [follow_path] at h
+          have hy := follow_path_means_contains _ _ _ h
           have claim := (in_one_tree_imp_not_in_other hunq hb).right
           contradiction
 
-
-        cases path with
-        | nil => cases y <;> simp_all [hclaim]
-        | cons d path' =>
-          cases y with
-          | nil => simp_all [hclaim]
-          | cons d' y' =>
-            cases d <;> cases d' <;>
-            try simp_all [hclaim]
-            case left.left =>
-              obtain ihl := ihl (follow_prefix_left_path hx) y' (follow_prefix_left_path hy)
-              simp [ihl]
-            case left.right =>
-                contradiction -- claim_false hy is simp_all [hclaim] or contradiction
-            case right.left =>
-                contradiction -- claim_false hx is simp_all [hclaim] or contradiction
-            case right.right =>
-                contradiction -- claim_false hx is simp_all [hclaim] or contradiction
-
-
-
-            obtain ihl := ihl path' (search_go_left hpath hunq hb)
-            -- Case analysis on d and d'
-            cases d with
-            | left =>
-              cases d' with
-              | left =>
-                obtain ihl := ihl (follow_prefix_left_path hx) y' (follow_prefix_left_path hy)
-                simp [ihl]
-              | right =>
-                have hclaim := claim_false hy
-                contradiction
-            | right =>
-              cases d' with
-              | left =>
-                have hclaim := claim_false hx
-                contradiction
-              | right =>
-                have hclaim := claim_false hx
-                contradiction
+        cases path <;> cases y
+        case nil.nil | nil.cons | cons.nil => simp_all [claim1]
+        case cons.cons =>
+          rename_i d path' d' y'
+          obtain ihl := ihl path' (search_go_left hpath hunq hb)
+          cases d <;> cases d'
+          case left.left =>
+            obtain ihl := ihl (claim2 hx) y' (claim2 hy)
+            simp [ihl]
+          case left.right =>
+            have hclaim := claim3 hy
+            contradiction
+          case right.left | right.right =>
+            have hclaim := claim3 hx
+            contradiction
 
       /- ------------------------------------------------------------------- -/
       · -- Case when v ∈ right subtree
+      /- ------------------------------------------------------------------- -/
         sorry
-
--- TODO: Prove this fact
 
 -- In any tree with n nodes, there are n − 1 edges.
 -- TODO: Prove this fact
