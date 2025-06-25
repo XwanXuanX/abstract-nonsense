@@ -356,26 +356,22 @@ def BinaryTree.contains' [DecidableEq α] : α → BinaryTree α → Bool
 theorem BinaryTree.contains'_iff_contains [DecidableEq α] (x : α) (t : BinaryTree α) :
   contains' x t = true ↔ contains x t := by
   constructor
-  show contains' x t = true → contains x t
+  all_goals
   · intro h
     induction t with
     | leaf => contradiction
     | node l v r ihl ihr =>
       simp_all [contains', contains]
       rcases h with ha | hb | hc
-      · left; exact ha -- x = v
-      · right; left; exact ihl hb -- x ∈ left subtree
-      · right; right; exact ihr hc -- x ∈ right subtree
-  show contains x t → contains' x t = true
-  · intro h
-    induction t with
-    | leaf => contradiction
-    | node l v r ihl ihr =>
-      simp_all [contains', contains]
-      rcases h with ha | hb | hc
-      · left; exact ha -- x = v
-      · right; left; exact ihl hb -- x ∈ left subtree
-      · right; right; exact ihr hc -- x ∈ right subtree
+      ·  -- x = v
+        left;
+        exact ha
+      · -- x ∈ left subtree
+        right; left;
+        exact ihl hb
+      · -- x ∈ right subtree
+        right; right;
+        exact ihr hc
 
 -- Define the number of operations needed to traverse a binary tree with inorder.
 def BinaryTree.inorder_time [DecidableEq α] : BinaryTree α → Nat
@@ -395,8 +391,13 @@ theorem BinaryTree.inorder_visits_all_nodes [DecidableEq α] (x : α)
     | node ltree v rtree ihl ihr =>
       simp_all [contains, inorder]
       rcases h with ha | hb | hc
-      /- ha:                  hb:                 hc:                     -/
-      right; left; exact ha; left; exact ihl hb; right; right; exact ihr hc
+      · right; left
+        exact ha
+      · left
+        exact ihl hb
+      · right; right
+        exact ihr hc
+
   -- Prove the reverse direction
   show x ∈ inorder t → contains x t
   · intro h
@@ -405,8 +406,12 @@ theorem BinaryTree.inorder_visits_all_nodes [DecidableEq α] (x : α)
     | node ltree v rtree ihl ihr =>
       simp_all [contains, inorder]
       rcases h with ha | hb | hc
-      /- ha:                      hb:             hc:                     -/
-      right; left; exact ihl ha; left; exact hb; right; right; exact ihr hc
+      · right; left
+        exact ihl ha
+      · left
+        exact hb
+      · right; right
+        exact ihr hc
 
 -- Prove that inorder traversal has a tight bound of O(n)
 theorem BinaryTree.inorder_time_bound [DecidableEq α] (t : BinaryTree α) :
@@ -628,27 +633,19 @@ lemma BinaryTree.path_valid [DecidableEq α] (t : BinaryTree α) (v : α) (h : c
 lemma BinaryTree.contains_iff_mem_collect_values [DecidableEq α] (v : α) (t : BinaryTree α) :
   contains v t ↔ v ∈ t.collect_values := by
   constructor
-  show contains v t → v ∈ t.collect_values
+  all_goals
   · intro h
     induction t with
     | leaf => contradiction
     | node ltree val rtree ihl ihr =>
       simp_all [contains, collect_values]
       rcases h with ha | hb | hc
-      · left; exact ha;
-      · right; left; exact ihl hb;
-      · right; right; exact ihr hc
-
-  show v ∈ t.collect_values → contains v t
-  · intro h
-    induction t with
-    | leaf => contradiction
-    | node ltree val rtree ihl ihr =>
-      simp_all [contains, collect_values]
-      rcases h with ha | hb | hc
-      · left; exact ha
-      · right; left; exact ihl hb
-      · right; right; exact ihr hc
+      · left;
+        exact ha;
+      · right; left;
+        exact ihl hb;
+      · right; right;
+        exact ihr hc
 
 lemma BinaryTree.v_notin_unq_lrtree [DecidableEq α] (ltree rtree : BinaryTree α) (v : α)
   (h : (node ltree v rtree).all_unique)
@@ -672,8 +669,7 @@ by
 
   show ¬ contains v rtree
   · by_contra! hcon
-    unfold all_unique at h; unfold collect_values at h
-    unfold List.Nodup at h
+    unfold all_unique at h; unfold collect_values at h; unfold List.Nodup at h
     cases h with
     | cons ih1 ih2 =>
       -- Now use hcon to show that v is in the left subtree
@@ -733,14 +729,63 @@ by
       exact follow_path_means_contains rtree v rest h3
     contradiction
 
+lemma BinaryTree.whole_tree_unique_imp_subtree_unique [DecidableEq α] (ltree rtree : BinaryTree α) (v : α)
+  (h : (node ltree v rtree).all_unique) : ltree.all_unique ∧ rtree.all_unique :=
+by
+  constructor
+  show ltree.all_unique
+  · -- Prove that the left subtree is unique
+    cases h with
+    | cons ih1 ih2 =>
+      have ⟨ltree_unique, rtree_unique, _⟩ := List.pairwise_append.mp ih2
+      unfold all_unique; unfold List.Nodup
+      exact ltree_unique
+  show rtree.all_unique
+  . -- Prove that the right subtree is unique
+    cases h with
+    | cons ih1 ih2 =>
+      have ⟨ltree_unique, rtree_unique, _⟩ := List.pairwise_append.mp ih2
+      unfold all_unique; unfold List.Nodup
+      exact rtree_unique
+
+lemma BinaryTree.search_path_search_cons [DecidableEq α]
+  {t : BinaryTree α} {v : α} {d : Dir} {p p' : Path}
+  : search_path.search t v (d :: p) = some (d :: p') ↔ search_path.search t v p = some p' :=
+by
+  constructor
+  -- Can remove common prefix and can add common prefix
+  all_goals
+  · intro h
+    induction t generalizing p p' with
+    | leaf => contradiction
+    | node lt vt rt ihl ihr =>
+      by_cases hcase1 : v = vt
+      · simp_all [search_path.search, hcase1]
+      · push_neg at hcase1
+        by_cases hcase2 : contains' v lt = true
+        · simp_all [search_path.search, hcase1.symm, hcase2]
+        · simp_all [search_path.search, hcase1.symm, hcase2]
+
 
 /- --------------------------------------------------------------------------------------------- -/
 /-                                    WORK UNDER CONSTRUCTION                                    -/
 /- --------------------------------------------------------------------------------------------- -/
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 -- Formalize the statement: there **exists** a **unique** path betwen the root and any given node.
-theorem BinaryTree.exists_unique_path [DecidableEq α] (t : BinaryTree α) (v : α) :
+theorem BinaryTree.exists_unique_path [DecidableEq α] (t : BinaryTree α) (v : α) (hunq : t.all_unique) :
   contains v t → ∃! p : Path, follow_path t p = some v := by
   intro h
   rw [ExistsUnique]
@@ -773,35 +818,95 @@ theorem BinaryTree.exists_unique_path [DecidableEq α] (t : BinaryTree α) (v : 
         2   2    Clearly, the paths to 2 are not unique.
     -/
     intro y hy
-    induction t generalizing y with
+    induction t generalizing path y with
     | leaf => contradiction
     | node ltree val rtree ihl ihr =>
       simp [contains] at h
       rcases h with ha | hb | hc
+      /- ------------------------------------------------------------------- -/
       · -- Case when v = val
         simp [← ha] at hx hy
-        unfold follow_path at hx hy
+
+        -- Prove contradiction when path = nil and y ≠ nil or vice versa
+        have hclaim (p : Path) (hp : p ≠ [])
+          (h : (ltree.node val rtree).follow_path p = some val) : False :=
+        by
+          rw [ha] at hx hy
+          have hz := follow_nonempty_path_false ltree rtree val p hp hunq h
+          contradiction
+
         -- Analyze the structure of the input paths
         cases path with
         | nil =>
           cases y with
           | nil => rfl
-          | cons d y' =>
-            simp at hx
+          | cons d y' => simp_all [ha, hclaim]
+        | cons d path' =>
+          cases y with
+          | nil => simp_all [ha, hclaim]
+          | cons d' y' => simp_all [ha, hclaim]
+
+      /- ------------------------------------------------------------------- -/
+      · -- Case when v ∈ left subtree
+        unfold ppath at hpath
+        obtain h_ltree_unique := (whole_tree_unique_imp_subtree_unique ltree rtree val hunq).left
+        obtain ihl := ihl h_ltree_unique hb
+
+        have hclaim (p : Path) (hp : p = [])
+          (h : (ltree.node val rtree).follow_path p = some v) : False :=
+        by
+          have h_val_notin_ltree := (v_notin_unq_lrtree ltree rtree val hunq).left
+          unfold follow_path at h
+          simp [hp] at h
+          rw [h] at h_val_notin_ltree
+          contradiction
+
+        cases path with
+        | nil =>
+          cases y with
+          | nil => rfl
+          | cons d y' => simp_all [(hclaim [] _ hx)]
+        | cons d path' =>
+          cases y with
+          | nil => simp_all [(hclaim [] _ hy)]
+          | cons d' y' =>
+            -- Need to prove search_path.search ltree v [] = some path' from hpath and hb
+            have hsearch_go_left : search_path.search ltree v [] = some path' := by
+              cases d with
+              | left =>
+                simp [search_path.search] at hpath
+                -- Need to prove that val ≠ v from `hb`
+                by_cases hcase : val = v
+                · have h_val_notin_ltree := (v_notin_unq_lrtree ltree rtree val hunq).left
+                  rw [hcase] at h_val_notin_ltree
+                  contradiction
+                · simp [hcase, contains'_iff_contains, hb] at hpath
+                  exact search_path_search_cons.mp hpath
+              | right =>
+                simp [search_path.search] at hpath
+                by_cases hcase : val = v
+                · simp [hcase] at hpath
+                · simp [hcase, contains'_iff_contains, hb] at hpath
+
+
+
+
+                  sorry
+
+
+
+
+            obtain ihl := ihl path' hsearch_go_left
 
 
 
             sorry
-        | cons d path' =>
-          cases y with
-          | nil => sorry
-          | cons d' y' => sorry
 
 
 
-      · -- Case when v ∈ left subtree
-        sorry
+        -- sorry
 
+      /- ------------------------------------------------------------------- -/
       · -- Case when v ∈ right subtree
         sorry
 
