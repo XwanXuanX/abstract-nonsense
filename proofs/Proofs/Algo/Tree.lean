@@ -805,11 +805,60 @@ by
 /- --------------------------------------------------------------------------------------------- -/
 
 
+lemma BinaryTree.search_go_right [DecidableEq α] {ltree rtree : BinaryTree α} {val v : α} {p : Path} {d : Dir}
+  (hpath : search_path.search (node ltree val rtree) v [] = some (d :: p))
+  (hunq : (ltree.node val rtree).all_unique)
+  (hb : contains v rtree)
+  : search_path.search rtree v [] = some p :=
+by
+  sorry
+  -- cases d with
+  -- | left =>
+  --   simp [search_path.search] at hpath
+  --   by_cases hcase : val = v
+  --   · simp [hcase] at hpath
+  --   · simp [hcase, contains'_iff_contains, hb] at hpath
 
 
 
 
-lemma BinaryTree.in_one_tree_imp_not_in_other [DecidableEq α] {ltree rtree : BinaryTree α} {val v : α}
+  --     -- Prove that ∃ q : Path, s.t. search rtree v [] = some q, and by .mpr of search_path_search_cons
+  --     -- We can can prove that search rtree v [Dir.left] = some (Dir.left :: q)
+  --     have h_exists_path : ∃ q : Path, search_path.search rtree v [] = some q := by
+  --       have claim := path_valid rtree v hb
+  --       exact Option.isSome_iff_exists.mp claim
+
+  --     obtain ⟨q, hq⟩ := h_exists_path
+  --     obtain hq' := (search_path_search_cons Dir.right).mpr hq
+
+  --     -- Now we have everything to prove a contradiction
+  --     by_cases hcase : p = q
+  --     · simp [hq'] at hpath
+  --     · simp [hq'] at hpath
+
+
+
+
+  -- | right =>
+  --   simp [search_path.search] at hpath
+  --   -- Need to prove that val ≠ v from `hb`
+  --   by_cases hcase : val = v
+  --   · have h_val_notin_ltree := (v_notin_unq_lrtree ltree rtree val hunq).left
+  --     rw [hcase] at h_val_notin_ltree
+  --     contradiction
+  --   · simp [hcase, contains'_iff_contains, hb] at hpath
+  --     exact (search_path_search_cons Dir.left).mp hpath
+
+
+
+
+
+
+
+
+
+
+lemma BinaryTree.subtree_disjoint_left [DecidableEq α] {ltree rtree : BinaryTree α} {val v : α}
   (hunq : (node ltree val rtree).all_unique) (h : contains v ltree)
   : val ≠ v ∧ ¬ rtree.contains v :=
 by
@@ -822,8 +871,14 @@ by
 
   show ¬ rtree.contains v
   · by_contra! hcon
-
     sorry
+
+
+lemma BinaryTree.subtree_disjoint_right [DecidableEq α] {ltree rtree : BinaryTree α} {val v : α}
+  (hunq : (node ltree val rtree).all_unique) (h : contains v rtree)
+  : val ≠ v ∧ ¬ ltree.contains v :=
+by
+  sorry
 
 
 
@@ -902,8 +957,8 @@ by
         unfold ppath at hpath
         obtain ihl := ihl h_subtree_unique.left hb
 
-        have claim1 (p : Path) (hp : p = []) (hb : contains v ltree)
-          (h : (ltree.node val rtree).follow_path p = some v) : False := by simp_all [follow_path, hp]
+        have claim1 (p : Path) (hp : p = []) (h : (ltree.node val rtree).follow_path p = some v)
+          : False := by simp_all [follow_path, hp]
 
         have claim2 {p : Path} (h : (ltree.node val rtree).follow_path (Dir.left :: p) = some v)
           : ltree.follow_path p = some v := by simp_all [follow_path]
@@ -911,7 +966,7 @@ by
         have claim3 {p : Path} (h : (ltree.node val rtree).follow_path (Dir.right :: p) = some v) : False := by
           simp [follow_path] at h
           have hy := follow_path_means_contains _ _ _ h
-          have claim := (in_one_tree_imp_not_in_other hunq hb).right
+          have claim := (subtree_disjoint_left hunq hb).right
           contradiction
 
         cases path <;> cases y
@@ -924,16 +979,41 @@ by
             obtain ihl := ihl (claim2 hx) y' (claim2 hy)
             simp [ihl]
           case left.right =>
-            have hclaim := claim3 hy
-            contradiction
+            have hclaim := claim3 hy; contradiction
           case right.left | right.right =>
-            have hclaim := claim3 hx
-            contradiction
+            have hclaim := claim3 hx; contradiction
 
       /- ------------------------------------------------------------------- -/
       · -- Case when v ∈ right subtree
       /- ------------------------------------------------------------------- -/
-        sorry
+        unfold ppath at hpath
+        obtain ihr := ihr h_subtree_unique.right hc
+
+        have claim1 (p : Path) (hp : p = []) (h : (ltree.node val rtree).follow_path p = some v)
+          : False := by simp_all [follow_path, hp]
+
+        have claim2 {p : Path} (h : (ltree.node val rtree).follow_path (Dir.right :: p) = some v)
+          : rtree.follow_path p = some v := by simp_all [follow_path]
+
+        have claim3 {p : Path} (h : (ltree.node val rtree).follow_path (Dir.left :: p) = some v) : False := by
+          simp [follow_path] at h
+          have hy := follow_path_means_contains _ _ _ h
+          have claim := (subtree_disjoint_right hunq hc).right
+          contradiction
+
+        cases path <;> cases y
+        case nil.nil | nil.cons | cons.nil => simp_all [claim1]
+        case cons.cons =>
+          rename_i d path' d' y'
+          obtain ihr := ihr path' (search_go_right hpath hunq hc)
+          cases d <;> cases d'
+          case left.left | left.right =>
+            have hclaim := claim3 hx; contradiction
+          case right.left =>
+            have hclaim := claim3 hy; contradiction
+          case right.right =>
+            obtain ihr := ihr (claim2 hx) y' (claim2 hy)
+            simp [ihr]
 
 -- In any tree with n nodes, there are n − 1 edges.
 -- TODO: Prove this fact
