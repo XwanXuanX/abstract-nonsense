@@ -112,17 +112,12 @@ theorem BinaryTree.eq_of_eq [DecidableEq α] {t1 t2 : BinaryTree α} :
     intro h
     obtain ⟨h_left, h_right, h_val⟩ := h
     -- Enumerate the cases for t1 and t2.
-    cases t1 with
-    | leaf =>
-      cases t2 with
-      | leaf => rfl
-      | node l2 v2 r2 => contradiction
-    | node l1 v1 r1 =>
-      cases t2 with
-      | leaf => contradiction
-      | node l2 v2 r2 =>
-        simp [getLeft, getRight, getVal] at h_left h_right h_val
-        rw [h_left, h_right, h_val]
+    cases t1 <;> cases t2
+    case leaf.leaf => rfl
+    case leaf.node | node.leaf => contradiction
+    case node.node =>
+      simp [getLeft, getRight, getVal] at h_left h_right h_val
+      rw [h_left, h_right, h_val]
 
 -- 8. A tree made of only one node has depth 1 and size 1.
 theorem BinaryTree.single_node_depth_size [DecidableEq α] (val : α) :
@@ -230,25 +225,21 @@ theorem BinaryTree.is_full_correct [DecidableEq α] {t : BinaryTree α} : isFull
     induction t with
     | leaf => exact Full.nil
     | node ltree x rtree ihl ihr =>
-      cases ltree with
-      | leaf =>
-        cases rtree with
-        | leaf =>
-          have : (leaf : BinaryTree α) = leaf ↔ (leaf : BinaryTree α) = leaf := by simp
-          exact Full.cons leaf leaf x Full.nil Full.nil this
-        | node ll vv rr =>
-          -- We can show by contradiction that `h` is impossible
-          simp [isFull] at h
-      | node l1 v1 r1 =>
-        cases rtree with
-        | leaf => simp [isFull] at h
-        | node ll vv rr =>
-          -- Need Full (node l1 v1 r1) and Full (node ll vv rr)
-          -- and node l1 v1 r1 = leaf ↔ node ll vv rr (this is easy to prove)
-          have claim1 : Full (node l1 v1 r1) := by simp_all [isFull]
-          have claim2 : Full (node ll vv rr) := by simp_all [isFull]
-          have claim3 : node l1 v1 r1 = leaf ↔ node ll vv rr = leaf := by simp
-          exact Full.cons (l1.node v1 r1) (ll.node vv rr) x claim1 claim2 claim3
+      cases ltree <;> cases rtree
+      case leaf.leaf =>
+        have : (leaf : BinaryTree α) = leaf ↔ (leaf : BinaryTree α) = leaf := by simp
+        exact Full.cons leaf leaf x Full.nil Full.nil this
+      case leaf.node | node.leaf =>
+        simp [isFull] at h
+      case node.node =>
+        rename_i l1 v1 r1 ll vv rr
+        -- Need Full (node l1 v1 r1) and Full (node ll vv rr)
+        -- and node l1 v1 r1 = leaf ↔ node ll vv rr (this is easy to prove)
+        have claim1 : Full (node l1 v1 r1) := by simp_all [isFull]
+        have claim2 : Full (node ll vv rr) := by simp_all [isFull]
+        have claim3 : node l1 v1 r1 = leaf ↔ node ll vv rr = leaf := by simp
+        exact Full.cons (l1.node v1 r1) (ll.node vv rr) x claim1 claim2 claim3
+
   -- Prove .mpr
   show t.Full → t.isFull = true
   · intro h
@@ -256,15 +247,10 @@ theorem BinaryTree.is_full_correct [DecidableEq α] {t : BinaryTree α} : isFull
     | nil => simp [isFull]
     | cons ltree rtree x hl hr ih_leaf ih_l ih_r =>
       simp [isFull, ih_l, ih_r]
-      cases ltree with
-      | leaf =>
-        cases rtree with
-        | leaf => simp
-        | node ll vv rr => simp at ih_leaf ih_l
-      | node l1 v1 r1 =>
-        cases rtree with
-        | leaf => simp at ih_leaf ih_l
-        | node ll vv rr => simp
+      cases ltree <;> cases rtree
+      case leaf.leaf => simp
+      case leaf.node | node.leaf => simp at ih_leaf ih_l
+      case node.node => simp
 
 -- Prove that if Full (node ltree x rtree) then Full ltree AND Full rtree
 lemma BinaryTree.full_node_imp_full_lr [DecidableEq α] {ltree rtree : BinaryTree α} {x : α}
@@ -823,7 +809,21 @@ by
 
 
 
+lemma BinaryTree.in_one_tree_imp_not_in_other [DecidableEq α] {ltree rtree : BinaryTree α} {val v : α}
+  (hunq : (node ltree val rtree).all_unique) (h : contains v ltree)
+  : val ≠ v ∧ ¬ rtree.contains v :=
+by
+  constructor
+  show val ≠ v
+  · by_contra! hcon
+    rw [hcon] at hunq
+    have claim := (v_notin_unq_lrtree ltree rtree v hunq).left
+    contradiction
 
+  show ¬ rtree.contains v
+  · by_contra! hcon
+
+    sorry
 
 
 
@@ -869,6 +869,15 @@ theorem BinaryTree.exists_unique_path [DecidableEq α] (t : BinaryTree α) (v : 
     | leaf => contradiction
     | node ltree val rtree ihl ihr =>
       simp [contains] at h
+
+      /- ------------------------------------------------------------------- -/
+      -- General facts about both subtrees
+      obtain h_subtree_unique := whole_tree_unique_imp_subtree_unique ltree rtree val hunq
+      obtain h_val_notin_subtree := v_notin_unq_lrtree ltree rtree val hunq
+
+      have hclaim (p : Path) (hp : p = []) (hb : contains v ltree)
+        (h : (ltree.node val rtree).follow_path p = some v) : False := by simp_all [follow_path, hp]
+
       rcases h with ha | hb | hc
       /- ------------------------------------------------------------------- -/
       · -- Case when v = val
@@ -896,41 +905,61 @@ theorem BinaryTree.exists_unique_path [DecidableEq α] (t : BinaryTree α) (v : 
       /- ------------------------------------------------------------------- -/
       · -- Case when v ∈ left subtree
         unfold ppath at hpath
-        obtain h_ltree_unique := (whole_tree_unique_imp_subtree_unique ltree rtree val hunq).left
-        obtain ihl := ihl h_ltree_unique hb
+        obtain ihl := ihl h_subtree_unique.left hb
 
-        have hclaim (p : Path) (hp : p = [])
-          (h : (ltree.node val rtree).follow_path p = some v) : False :=
-        by
-          have h_val_notin_ltree := (v_notin_unq_lrtree ltree rtree val hunq).left
-          unfold follow_path at h
-          simp [hp] at h
-          rw [h] at h_val_notin_ltree
+
+
+
+        have follow_prefix_left_path [DecidableEq α]  {p : Path} (h : (ltree.node val rtree).follow_path (Dir.left :: p) = some v)
+          : ltree.follow_path p = some v := by simp_all [follow_path]
+
+        have claim_false {y' : Path} (hy : (ltree.node val rtree).follow_path (Dir.right :: y') = some v)
+          : False := by
+          simp [follow_path] at hy
+          have hy := follow_path_means_contains _ _ _ hy
+          have claim := (in_one_tree_imp_not_in_other hunq hb).right
           contradiction
 
+
         cases path with
-        | nil =>
-          cases y with
-          | nil => rfl
-          | cons d y' => simp_all [(hclaim [] _ hx)]
+        | nil => cases y <;> simp_all [hclaim]
         | cons d path' =>
           cases y with
-          | nil => simp_all [(hclaim [] _ hy)]
+          | nil => simp_all [hclaim]
           | cons d' y' =>
+            cases d <;> cases d' <;>
+            try simp_all [hclaim]
+            case left.left =>
+              obtain ihl := ihl (follow_prefix_left_path hx) y' (follow_prefix_left_path hy)
+              simp [ihl]
+            case left.right =>
+                contradiction -- claim_false hy is simp_all [hclaim] or contradiction
+            case right.left =>
+                contradiction -- claim_false hx is simp_all [hclaim] or contradiction
+            case right.right =>
+                contradiction -- claim_false hx is simp_all [hclaim] or contradiction
+
+
 
             obtain ihl := ihl path' (search_go_left hpath hunq hb)
-
-
             -- Case analysis on d and d'
             cases d with
             | left =>
               cases d' with
-              | left => sorry
-              | right => sorry
+              | left =>
+                obtain ihl := ihl (follow_prefix_left_path hx) y' (follow_prefix_left_path hy)
+                simp [ihl]
+              | right =>
+                have hclaim := claim_false hy
+                contradiction
             | right =>
               cases d' with
-              | left => sorry
-              | right => sorry
+              | left =>
+                have hclaim := claim_false hx
+                contradiction
+              | right =>
+                have hclaim := claim_false hx
+                contradiction
 
       /- ------------------------------------------------------------------- -/
       · -- Case when v ∈ right subtree
