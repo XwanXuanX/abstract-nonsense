@@ -452,14 +452,16 @@ def BinaryTree.search_path [DecidableEq α] (t : BinaryTree α) (v : α) : Optio
   else
     none -- If the value is not in the tree, return none.
 
--- Define a function to collect all node values from a binary tree.
-def BinaryTree.collect_values [DecidableEq α] : BinaryTree α → List α
-  | leaf => []
-  | node l v r => v :: (l.collect_values ++ r.collect_values)
-
 -- Define the proposition that all nodes in the tree have unique values.
-def BinaryTree.all_unique [DecidableEq α] (t : BinaryTree α) : Prop :=
-  t.collect_values.Nodup
+inductive BinaryTree.all_unique [DecidableEq α] : BinaryTree α → Prop
+| leaf : all_unique leaf
+| node {l r : BinaryTree α} {v : α} :
+    all_unique l →
+    all_unique r →
+    (∀ x, contains x l → x ≠ v) →
+    (∀ x, contains x r → x ≠ v) →
+    (∀ x, contains x l → ∀ y, contains y r → x ≠ y) →
+    all_unique (node l v r)
 
 section Testcases
 
@@ -616,23 +618,6 @@ lemma BinaryTree.path_valid [DecidableEq α] (t : BinaryTree α) (v : α) (h : c
         · simp [hcase2]
           exact search_append_monotonic rtree v [] [Dir.right] ihr
 
-lemma BinaryTree.contains_iff_mem_collect_values [DecidableEq α] (v : α) (t : BinaryTree α) :
-  contains v t ↔ v ∈ t.collect_values := by
-  constructor
-  all_goals
-  · intro h
-    induction t with
-    | leaf => contradiction
-    | node ltree val rtree ihl ihr =>
-      simp_all [contains, collect_values]
-      rcases h with ha | hb | hc
-      · left;
-        exact ha;
-      · right; left;
-        exact ihl hb;
-      · right; right;
-        exact ihr hc
-
 lemma BinaryTree.v_notin_unq_lrtree [DecidableEq α] (ltree rtree : BinaryTree α) (v : α)
   (h : (node ltree v rtree).all_unique)
   : ¬ contains v ltree ∧ ¬ contains v rtree :=
@@ -640,32 +625,16 @@ by
   constructor
   show ¬ contains v ltree
   · by_contra! hcon
-    unfold all_unique at h; unfold collect_values at h; unfold List.Nodup at h
     cases h with
-    | cons ih1 ih2 =>
-      -- Now use hcon to show that v is in the left subtree
-      -- Thus, v is definitely in ltree.collect_values ++ rtree.collect_values
-      -- ih1 wold be come v ≠ v, which is a contradiction
-      have h_v_in_ltree : v ∈ ltree.collect_values := by
-        exact (contains_iff_mem_collect_values v ltree).mp hcon
-      have h_v_in_all : v ∈ ltree.collect_values ++ rtree.collect_values := by
-        exact List.mem_append_left rtree.collect_values h_v_in_ltree
-      have claim := ih1 v h_v_in_all
+    | node ih1 ih2 ih3 ih4 ih5 =>
+      have claim := ih3 v hcon
       contradiction
 
   show ¬ contains v rtree
   · by_contra! hcon
-    unfold all_unique at h; unfold collect_values at h; unfold List.Nodup at h
     cases h with
-    | cons ih1 ih2 =>
-      -- Now use hcon to show that v is in the left subtree
-      -- Thus, v is definitely in rtree.collect_values ++ rtree.collect_values
-      -- ih1 wold be come v ≠ v, which is a contradiction
-      have h_v_in_rtree : v ∈ rtree.collect_values := by
-        exact (contains_iff_mem_collect_values v rtree).mp hcon
-      have h_v_in_all : v ∈ ltree.collect_values ++ rtree.collect_values := by
-        exact List.mem_append_right ltree.collect_values h_v_in_rtree
-      have claim := ih1 v h_v_in_all
+    | node ih1 ih2 ih3 ih4 ih5 =>
+      have claim := ih4 v hcon
       contradiction
 
 lemma BinaryTree.follow_path_means_contains [DecidableEq α] (t : BinaryTree α) (v : α) (path : Path)
@@ -720,19 +689,11 @@ lemma BinaryTree.whole_tree_unique_imp_subtree_unique [DecidableEq α] (ltree rt
 by
   constructor
   show ltree.all_unique
-  · -- Prove that the left subtree is unique
-    cases h with
-    | cons ih1 ih2 =>
-      have ⟨ltree_unique, rtree_unique, _⟩ := List.pairwise_append.mp ih2
-      unfold all_unique; unfold List.Nodup
-      exact ltree_unique
+  · cases h with
+    | node ih1 ih2 ih3 ih4 ih5 => exact ih1
   show rtree.all_unique
-  . -- Prove that the right subtree is unique
-    cases h with
-    | cons ih1 ih2 =>
-      have ⟨ltree_unique, rtree_unique, _⟩ := List.pairwise_append.mp ih2
-      unfold all_unique; unfold List.Nodup
-      exact rtree_unique
+  . cases h with
+    | node ih1 ih2 ih3 ih4 ih5 => exact ih2
 
 lemma BinaryTree.search_path_search_cons [DecidableEq α]
   {t : BinaryTree α} {v : α} {p p' : Path} (d : Dir)
@@ -799,6 +760,45 @@ by
       · simp [hq'] at hpath
       · simp [hq'] at hpath
 
+lemma BinaryTree.subtree_disjoint_left [DecidableEq α] {ltree rtree : BinaryTree α} {val v : α}
+  (hunq : (node ltree val rtree).all_unique) (h : contains v ltree)
+  : val ≠ v ∧ ¬ rtree.contains v :=
+by
+  constructor
+  show val ≠ v
+  · by_contra! hcon
+    rw [hcon] at hunq
+    have claim := (v_notin_unq_lrtree ltree rtree v hunq).left
+    contradiction
+
+  show ¬ rtree.contains v
+  · by_contra! hcon
+    cases hunq with
+    | node ih1 ih2 ih3 ih4 ih5 =>
+      have claim := ih5 v h v hcon
+      contradiction
+
+lemma BinaryTree.subtree_disjoint_right [DecidableEq α] {ltree rtree : BinaryTree α} {val v : α}
+  (hunq : (node ltree val rtree).all_unique) (h : contains v rtree)
+  : val ≠ v ∧ ¬ ltree.contains v :=
+by
+  constructor
+  show val ≠ v
+  · by_contra! hcon
+    rw [hcon] at hunq
+    have claim := (v_notin_unq_lrtree ltree rtree v hunq).right
+    contradiction
+
+  show ¬ ltree.contains v
+  · by_contra! hcon
+    cases hunq with
+    | node ih1 ih2 ih3 ih4 ih5 =>
+      have claim := ih5 v hcon v h
+      contradiction
+
+
+
+
 
 /- --------------------------------------------------------------------------------------------- -/
 /-                                    WORK UNDER CONSTRUCTION                                    -/
@@ -858,27 +858,13 @@ by
 
 
 
-lemma BinaryTree.subtree_disjoint_left [DecidableEq α] {ltree rtree : BinaryTree α} {val v : α}
-  (hunq : (node ltree val rtree).all_unique) (h : contains v ltree)
-  : val ≠ v ∧ ¬ rtree.contains v :=
-by
-  constructor
-  show val ≠ v
-  · by_contra! hcon
-    rw [hcon] at hunq
-    have claim := (v_notin_unq_lrtree ltree rtree v hunq).left
-    contradiction
-
-  show ¬ rtree.contains v
-  · by_contra! hcon
-    sorry
 
 
-lemma BinaryTree.subtree_disjoint_right [DecidableEq α] {ltree rtree : BinaryTree α} {val v : α}
-  (hunq : (node ltree val rtree).all_unique) (h : contains v rtree)
-  : val ≠ v ∧ ¬ ltree.contains v :=
-by
-  sorry
+
+
+
+
+
 
 
 
