@@ -760,6 +760,49 @@ by
       · simp [hq'] at hpath
       · simp [hq'] at hpath
 
+lemma BinaryTree.search_go_right [DecidableEq α] {ltree rtree : BinaryTree α} {val v : α} {p : Path} {d : Dir}
+  (hpath : search_path.search (node ltree val rtree) v [] = some (d :: p))
+  (hunq : (ltree.node val rtree).all_unique)
+  (hb : contains v rtree)
+  : search_path.search rtree v [] = some p :=
+by
+  -- Given `hb` it's not possible for `v` to be in the left subtree
+  have claim : ¬ contains v ltree := by
+    by_contra! hcon
+    cases hunq with
+    | node ih1 ih2 ih3 ih4 ih5 =>
+      have contra := ih5 v hcon v hb
+      contradiction
+
+  cases d with
+  | left =>
+    simp [search_path.search] at hpath
+    by_cases hcase : val = v
+    · simp [hcase] at hpath
+    · simp [hcase, claim, contains'_iff_contains] at hpath
+      -- Prove that ∃ q : Path, s.t. search rtree v [] = some q, and by .mpr of search_path_search_cons
+      -- We can can prove that search rtree v [Dir.left] = some (Dir.left :: q)
+      have h_exists_path : ∃ q : Path, search_path.search rtree v [] = some q := by
+        have claim := path_valid rtree v hb
+        exact Option.isSome_iff_exists.mp claim
+
+      obtain ⟨q, hq⟩ := h_exists_path
+      obtain hq' := (search_path_search_cons Dir.right).mpr hq
+
+      -- Now we have everything to prove a contradiction
+      by_cases hcase : p = q
+      · simp [hq'] at hpath
+      · simp [hq'] at hpath
+
+  | right =>
+    -- Need to prove that val ≠ v from `hb`
+    simp [search_path.search] at hpath
+    by_cases hcase : val = v
+    · simp [hcase] at hpath
+    · push_neg at hcase
+      simp [hcase, claim, contains'_iff_contains] at hpath
+      exact (search_path_search_cons Dir.right).mp hpath
+
 lemma BinaryTree.subtree_disjoint_left [DecidableEq α] {ltree rtree : BinaryTree α} {val v : α}
   (hunq : (node ltree val rtree).all_unique) (h : contains v ltree)
   : val ≠ v ∧ ¬ rtree.contains v :=
@@ -795,82 +838,6 @@ by
     | node ih1 ih2 ih3 ih4 ih5 =>
       have claim := ih5 v hcon v h
       contradiction
-
-
-
-
-
-/- --------------------------------------------------------------------------------------------- -/
-/-                                    WORK UNDER CONSTRUCTION                                    -/
-/- --------------------------------------------------------------------------------------------- -/
-
-
-lemma BinaryTree.search_go_right [DecidableEq α] {ltree rtree : BinaryTree α} {val v : α} {p : Path} {d : Dir}
-  (hpath : search_path.search (node ltree val rtree) v [] = some (d :: p))
-  (hunq : (ltree.node val rtree).all_unique)
-  (hb : contains v rtree)
-  : search_path.search rtree v [] = some p :=
-by
-  sorry
-  -- cases d with
-  -- | left =>
-  --   simp [search_path.search] at hpath
-  --   by_cases hcase : val = v
-  --   · simp [hcase] at hpath
-  --   · simp [hcase, contains'_iff_contains, hb] at hpath
-
-
-
-
-  --     -- Prove that ∃ q : Path, s.t. search rtree v [] = some q, and by .mpr of search_path_search_cons
-  --     -- We can can prove that search rtree v [Dir.left] = some (Dir.left :: q)
-  --     have h_exists_path : ∃ q : Path, search_path.search rtree v [] = some q := by
-  --       have claim := path_valid rtree v hb
-  --       exact Option.isSome_iff_exists.mp claim
-
-  --     obtain ⟨q, hq⟩ := h_exists_path
-  --     obtain hq' := (search_path_search_cons Dir.right).mpr hq
-
-  --     -- Now we have everything to prove a contradiction
-  --     by_cases hcase : p = q
-  --     · simp [hq'] at hpath
-  --     · simp [hq'] at hpath
-
-
-
-
-  -- | right =>
-  --   simp [search_path.search] at hpath
-  --   -- Need to prove that val ≠ v from `hb`
-  --   by_cases hcase : val = v
-  --   · have h_val_notin_ltree := (v_notin_unq_lrtree ltree rtree val hunq).left
-  --     rw [hcase] at h_val_notin_ltree
-  --     contradiction
-  --   · simp [hcase, contains'_iff_contains, hb] at hpath
-  --     exact (search_path_search_cons Dir.left).mp hpath
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 -- Formalize the statement: there **exists** a **unique** path betwen the root and any given node.
 theorem BinaryTree.exists_unique_path [DecidableEq α] (t : BinaryTree α) (v : α) (hunq : t.all_unique) :
@@ -1000,6 +967,12 @@ by
           case right.right =>
             obtain ihr := ihr (claim2 hx) y' (claim2 hy)
             simp [ihr]
+
+
+/- --------------------------------------------------------------------------------------------- -/
+/-                                    WORK UNDER CONSTRUCTION                                    -/
+/- --------------------------------------------------------------------------------------------- -/
+
 
 -- In any tree with n nodes, there are n − 1 edges.
 -- TODO: Prove this fact
