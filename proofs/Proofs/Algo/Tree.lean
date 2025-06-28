@@ -989,26 +989,11 @@ Now we want to prove some more general facts about trees.
 
 Thus we will use the NaryTree instead of BinaryTree.
 However, since define everything myself and prove from scratch is so much a headache even for binary trees,
-we will use the `Tree` structured from the `Mathlib` library, together with some already proved facts.
+we will use the `Tree` structure from the `Mathlib` library, together with some already proved facts.
 When the facts that we are proving are getting more complicated, it's not possible to prove them
 from scratch by one person.
 
 Hopefully this can give me some exposure to the math library of Lean 4.
 -/
-
-
-
-
-
-
--- In any tree with n nodes, there are n − 1 edges.
--- TODO: Prove this fact
-
--- The number of distinct binary trees with n nodes is the ( n )th Catalan number.
--- TODO: Prove this fact
-
--- The sum of the depths of all leaves in a perfect binary tree of height h is (h + 1) ⋅ 2h.
--- TODO: Prove this fact
-
 
 end NaryTree
