@@ -839,6 +839,17 @@ by
       have claim := ih5 v hcon v h
       contradiction
 
+/-
+
+    ___     _                       _               ___
+   | __|   (_)    _ _     __ _     | |      o O O  | _ )    ___     ___     ___
+   | _|    | |   | ' \   / _` |    | |     o       | _ \   / _ \   (_-<    (_-<
+  _|_|_   _|_|_  |_||_|  \__,_|   _|_|_   TS__[O]  |___/   \___/   /__/_   /__/_
+_| """ |_|"""""|_|"""""|_|"""""|_|"""""| {======|_|"""""|_|"""""|_|"""""|_|"""""|
+"`-0-0-'"`-0-0-'"`-0-0-'"`-0-0-'"`-0-0-'./o--000'"`-0-0-'"`-0-0-'"`-0-0-'"`-0-0-'
+
+-/
+
 -- Formalize the statement: there **exists** a **unique** path betwen the root and any given node.
 theorem BinaryTree.exists_unique_path [DecidableEq α] (t : BinaryTree α) (v : α) (hunq : t.all_unique) :
   contains v t → ∃! p : Path, follow_path t p = some v :=
@@ -969,9 +980,6 @@ by
             simp [ihr]
 
 
-/- --------------------------------------------------------------------------------------------- -/
-/-                                    WORK UNDER CONSTRUCTION                                    -/
-/- --------------------------------------------------------------------------------------------- -/
 
 
 -- In any tree with n nodes, there are n − 1 edges.
