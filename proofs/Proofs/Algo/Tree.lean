@@ -840,14 +840,13 @@ by
       contradiction
 
 /-
+    _/_/_/_/  _/                      _/      _/_/_/
+   _/            _/_/_/      _/_/_/  _/      _/    _/    _/_/      _/_/_/    _/_/_/
+  _/_/_/    _/  _/    _/  _/    _/  _/      _/_/_/    _/    _/  _/_/      _/_/
+ _/        _/  _/    _/  _/    _/  _/      _/    _/  _/    _/      _/_/      _/_/
+_/        _/  _/    _/    _/_/_/  _/      _/_/_/      _/_/    _/_/_/    _/_/_/
 
-    ___     _                       _               ___
-   | __|   (_)    _ _     __ _     | |      o O O  | _ )    ___     ___     ___
-   | _|    | |   | ' \   / _` |    | |     o       | _ \   / _ \   (_-<    (_-<
-  _|_|_   _|_|_  |_||_|  \__,_|   _|_|_   TS__[O]  |___/   \___/   /__/_   /__/_
-_| """ |_|"""""|_|"""""|_|"""""|_|"""""| {======|_|"""""|_|"""""|_|"""""|_|"""""|
-"`-0-0-'"`-0-0-'"`-0-0-'"`-0-0-'"`-0-0-'./o--000'"`-0-0-'"`-0-0-'"`-0-0-'"`-0-0-'
-
+* By the way, this font is called "lean" XD
 -/
 
 -- Formalize the statement: there **exists** a **unique** path betwen the root and any given node.
@@ -979,6 +978,26 @@ by
             obtain ihr := ihr (claim2 hx) y' (claim2 hy)
             simp [ihr]
 
+end BinTreeAlgos
+
+end BinTree
+
+namespace NaryTree
+
+/-
+Now we want to prove some more general facts about trees.
+
+Thus we will use the NaryTree instead of BinaryTree.
+However, since define everything myself and prove from scratch is so much a headache even for binary trees,
+we will use the `Tree` structured from the `Mathlib` library, together with some already proved facts.
+When the facts that we are proving are getting more complicated, it's not possible to prove them
+from scratch by one person.
+
+Hopefully this can give me some exposure to the math library of Lean 4.
+-/
+
+
+
 
 
 
@@ -991,6 +1010,5 @@ by
 -- The sum of the depths of all leaves in a perfect binary tree of height h is (h + 1) ⋅ 2h.
 -- TODO: Prove this fact
 
-end BinTreeAlgos
 
-end BinTree
+end NaryTree
