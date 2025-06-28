@@ -709,9 +709,7 @@ by
       by_cases hcase1 : v = vt
       · simp_all [search_path.search, hcase1]
       · push_neg at hcase1
-        by_cases hcase2 : contains' v lt = true
-        · simp_all [search_path.search, hcase1.symm, hcase2]
-        · simp_all [search_path.search, hcase1.symm, hcase2]
+        by_cases hcase2 : contains' v lt = true <;> simp_all [search_path.search, hcase1.symm, hcase2]
 
 /-
 It's not easy to see that `d` can only be `left` for all three hypothesis to hold.
