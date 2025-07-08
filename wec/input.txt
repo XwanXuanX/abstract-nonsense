@@ -1,0 +1,17 @@
+(SOCIAL, 3)
+(Dinner with friends at BeerTown, BeerTown, false, 18:00–20:00)
+(Movie night at Princess Cinemas, Princess Cinemas, false, 20:30–23:00)
+(Board Games at Student Lounge, Student Lounge, true, 16:00–18:00)
+
+(SCHOOL, 5)
+(ECE 150, lecture, E7, 10:00–11:30 Mo)
+(ECE 150, lab, E5, 14:30–16:30 Tu)
+(MATH 135, tutorial, MC, 09:00–10:00 We)
+(N/A, study, DP, 13:00–15:00 Th)
+(CS 246, class, DC, 11:00–12:30 Fr)
+
+(ECs, 4)
+(Robotics Club, PAC, true, 18:00–20:00)
+(Campus Newspaper Meeting, SLC, true, 17:00–18:00)
+(Cashier at Tims, Tims University Plaza, false, 17:00–21:00)
+(Barista Shift, Coffee House, true, 09:00–13:00)
