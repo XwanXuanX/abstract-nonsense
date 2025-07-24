@@ -17,6 +17,13 @@
 % Use double spacing throughout the document
 % \doublespacing
 
+% Define commonly used sets
+\newcommand{\N}{\mathbb{N}} % Natural numbers
+\newcommand{\Z}{\mathbb{Z}} % Integers
+\newcommand{\R}{\mathbb{R}} % Real numbers
+\newcommand{\Q}{\mathbb{Q}} % Rational numbers
+\newcommand{\C}{\mathbb{C}} % Complex numbers
+
 % Define a bunch of theorem-like environments
 \newtheorem{theorem}{Theorem}
 \newtheorem{lemma}{Lemma}
@@ -38,19 +45,191 @@
 
 
 \begin{proposition}
-  Let $n \in \mathbb{N}$. Prove that $\sum_{i=1}^n i = \frac{n(n+1)}{2}$.
+  There does not exist $n, m$ in $\N$ such that $12m + 21n = 1$.
   \begin{proof}
-    We proceed by induction on $n$. \\
-    \textbf{Base case:} For $n=1$, $\sum_{i=1}^1 i = 1 = \frac{1 \cdot 2}{2}$. \\
-    \textbf{Inductive step:} Assume true for $n=k$: $\sum_{i=1}^k i = \frac{k(k+1)}{2}$. \\
-    For $n=k+1$:
+    Assume for the sake of contradiction that there exist $m, n \in \N$ such that $12m + 21n = 1$.
+    Note that, $12m + 21n = 3(4m + 7n)$.
+    By the definition of divisibility, $3 \mid 12m + 21n$.
+    However, $1$ is not divisible by $3$.
+    This is a contradiction.
+    Therefore, there do not exist $m, n \in \N$ such that $12m + 21n = 1$.
+  \end{proof}
+\end{proposition}
+
+
+\begin{proposition}
+  Let $A, B, C$ be sets. Assume that $A \cap C \subseteq B$ and $a \in C$.
+  Prove that $a \notin A \backslash B$.
+  \begin{proof}
+    Assume for the sake of contradiction that $a \in A \backslash B$.
+    By the definition of set difference, this means that $a \in A$ and $a \notin B$.
+    Since $a \in C$, we have $a \in A \cap C$.
+    By the assumption that $A \cap C \subseteq B$, it follows that $a \in B$.
+    This contradicts our earlier conclusion that $a \notin B$.
+    Therefore, our assumption is false, and we conclude that $a \notin A \backslash B$.
+  \end{proof}
+\end{proposition}
+
+
+\begin{proposition}
+  Let $A, B$ be sets. Prove that the sets $A \backslash B$ and $B \backslash A$ and $A \cap B$ are pairwise disjoint.
+  \begin{proof}
+    We need to show that the intersection of any two of these sets is empty.
+
+    1. \textbf{Intersection of $A \backslash B$ and $B \backslash A$:}
+    Let $x \in (A \backslash B) \cap (B \backslash A)$.
+    Then, $x \in A$ and $x \notin B$, and also $x \in B$ and $x \notin A$.
+    This is a contradiction, so $(A \backslash B) \cap (B \backslash A) = \emptyset$.
+
+    2. \textbf{Intersection of $A \backslash B$ and $A \cap B$:}
+    Let $x \in (A \backslash B) \cap (A \cap B)$.
+    Then, $x \in A$ and $x \notin B$, and also $x \in A$ and $x \in B$.
+    This is a contradiction, so $(A \backslash B) \cap (A \cap B) = \emptyset$.
+
+    3. \textbf{Intersection of $B \backslash A$ and $A \cap B$:}
+    Let $x \in (B \backslash A) \cap (A \cap B)$.
+    Then, $x \in B$ and $x \notin A$, and also $x \in A$ and $x \in B$.
+    This is a contradiction, so $(B \backslash A) \cap (A \cap B) = \emptyset$.
+
+    Since all pairs of intersections are empty, the sets are pairwise disjoint.
+  \end{proof}
+\end{proposition}
+
+
+\begin{proposition}
+  Let $\Q^+$ denotes the set of positive rational numbers.
+  Prove that $\forall x \in \Q^+, \exists y \in \Q^+$ such that $y < x$.
+  \begin{proof}
+    Since $x \in \Q^+$, then $\exists a, b \in \N$ such that $x = \frac{a}{b}$.
+    Let $y = \frac{a}{2b}$. Since $a, 2b \in \N$, we have $y \in \Q^+$.
+    Now, we need to show that $y < x$.
     \begin{align*}
-      \sum_{i=1}^{k+1} i & = \left(\sum_{i=1}^k i\right) + (k+1) \\
-                         & = \frac{k(k+1)}{2} + (k+1)            \\
-                         & = \frac{k(k+1) + 2(k+1)}{2}           \\
-                         & = \frac{(k+1)(k+2)}{2}
+      y < x & \iff \frac{a}{2b} < \frac{a}{b} \\
+            & \iff a < 2a                     \\
+            & \iff 1 < 2
     \end{align*}
-    Thus, the result holds for all $n \in \mathbb{N}$.
+    This is true, so we conclude that $\exists y \in \Q^+$ such that $y < x$.
+    Therefore, $\forall x \in \Q^+, \exists y \in \Q^+$ such that $y < x$.
+  \end{proof}
+\end{proposition}
+
+
+\begin{proposition}
+  There does not exists $m \in \Z$ such that $m$ is odd and can be expressed in the form of
+  $m = k + l + n$, where $k, l, n$ are even numbers.
+  \begin{proof}
+    Assume for the sake of contradiction that there exists $m \in \Z$ such that $m$ is odd and can be expressed as
+    $m = k + l + n$, where $k, l, n$ are even numbers.
+    By the definition of even numbers, we can write $k = 2a$, $l = 2b$, and $n = 2c$ for some integers $a, b, c$.
+    Then,
+    \begin{align*}
+      m & = k + l + n     \\
+        & = 2a + 2b + 2c  \\
+        & = 2(a + b + c).
+    \end{align*}
+    Since $a + b + c$ is an integer, it follows that $m$ is even.
+    This contradicts our assumption that $m$ is odd.
+    Therefore, there does not exist such an $m$.
+  \end{proof}
+\end{proposition}
+
+
+\begin{proposition}
+  There are infinitely many composite numbers.
+  \begin{proof}
+    Assume for the sake of contradiction that there are only finitely many composite numbers.
+    Let the largest composite number be $m$.
+    Then $\exists s, t \in \N$ such that $s, t < m$ and $m = st$.
+    Note that the number $s(t + 1)$ is also a composite number, and $s(t + 1) > st = m$.
+    This contradicts our assumption that $m$ is the largest composite number.
+    Therefore, there are infinitely many composite numbers.
+  \end{proof}
+\end{proposition}
+
+
+\begin{proposition}
+  Prove that $\forall a, b, c \in \Z, a^2 + b^2 = c^2$ implies that $a$ is even or $b$ is even.
+  \begin{proof}
+    Assume for the sake of contradiction that both $a$ and $b$ are odd. Then, we can write $a = 2m + 1$ and $b = 2n + 1$ for some integers $m, n$. Now, we compute $a^2 + b^2$:
+    \begin{align*}
+      a^2 + b^2
+       & = (2m + 1)^2 + (2n + 1)^2           \\
+       & = [4m^2 + 4m + 1] + [4n^2 + 4n + 1] \\
+       & = 4m^2 + 4m + 4n^2 + 4n + 2         \\
+       & = 2(2m^2 + 2m + 2n^2 + 2n + 1)
+    \end{align*}
+    Now, we compute $c$:
+    \begin{align*}
+      c & = \sqrt{a^2 + b^2}                                \\
+        & = \sqrt{2(2m^2 + 2m + 2n^2 + 2n + 1)}.            \\
+        & = \sqrt{2} \cdot \sqrt{2m^2 + 2m + 2n^2 + 2n + 1}
+    \end{align*}
+    Note that $c$ is irrational because $\sqrt{2}$ is irrational.
+    However, $c$ is an integer by assumption. This is a contradiction.
+    Therefore, at least one of $a$ or $b$ must be even.
+  \end{proof}
+\end{proposition}
+
+
+\begin{proposition}
+  Prove that for all $n \in \Z$ and for all $m \in \N$, if $n \nmid m$, then $n = 0$.
+  \begin{proof}
+    By contrapositive, we need to show that if $n \neq 0$, then $\exists m \in \N, n \mid m$.
+    Then we prove by cases:
+    \begin{itemize}
+      \item If $n > 0$, then $m = n$ is a natural number such that $n \mid m$.
+      \item If $n < 0$, then $m = -n$ is a natural number such that $n \mid m$.
+      \item If $n = 0$, then contradicts the assumption that $n \neq 0$.
+    \end{itemize}
+    In all cases, we have found a natural number $m$ such that $n \mid m$.
+    Therefore, if $n \nmid m$, then $n = 0$.
+  \end{proof}
+\end{proposition}
+
+
+\begin{proposition}
+  For all $n \in \Z$, prove that $4 \nmid n^2 + 2$.
+  \begin{proof}
+    Assume for the sake of contradiction that $4 \mid n^2 + 2$ for some integer $n$.
+    Then we can write $n^2 + 2 = 4k$ for some integer $k$.
+    Rearranging gives us $n^2 = 4k - 2$. Therefore, $n^2 \equiv -2 (\mod 4)$
+    Now, we consider the possible values of $n^2$ modulo $4$:
+    \begin{itemize}
+      \item If $n \equiv 0 (\mod 4)$, then $n^2 \equiv 0 (\mod 4)$.
+      \item If $n \equiv 1 (\mod 4)$, then $n^2 \equiv 1 (\mod 4)$.
+      \item If $n \equiv 2 (\mod 4)$, then $n^2 \equiv 0 (\mod 4)$.
+      \item If $n \equiv 3 (\mod 4)$, then $n^2 \equiv 1 (\mod 4)$.
+    \end{itemize}
+    In all cases, $n^2 \equiv 0$ or $1 (\mod 4)$.
+    Therefore, $n^2 \equiv -2 (\mod 4)$ is impossible.
+    This contradicts our assumption that $4 \mid n^2 + 2$.
+    Therefore, we conclude that $4 \nmid n^2 + 2$ for all integers $n$.
+  \end{proof}
+\end{proposition}
+
+
+\begin{proposition}
+  For all $n, m \in \Z$, prove that if $4 \mid m^2 + n^2$, then $m$ is even or $n$ is even.
+  \begin{proof}
+    Assume for the sake of contradiction that both $m$ and $n$ are odd.
+    Then we can write $m = 2a + 1$ and $n = 2b + 1$ for some integers $a, b$.
+    Now, we compute $m^2 + n^2$:
+    \begin{align*}
+      m^2 + n^2
+       & = (2a + 1)^2 + (2b + 1)^2           \\
+       & = [4a^2 + 4a + 1] + [4b^2 + 4b + 1] \\
+       & = 4a^2 + 4a + 4b^2 + 4b + 2         \\
+       & = 2(2a^2 + 2a + 2b^2 + 2b + 1).     \\
+    \end{align*}
+    By the definition of divisibility, $4 \mid m^2 + n^2$ means that $\exists l \in \Z$ such that $m^2 + n^2 = 4l$.
+    \begin{align*}
+      2(2a^2 + 2a + 2b^2 + 2b + 1) & = 4l \\
+      2a^2 + 2a + 2b^2 + 2b + 1    & = 2l \\
+      2(a^2 + a + b^2 + b) + 1     & = 2l
+    \end{align*}
+    The left-hand side is odd, while the right-hand side is even.
+    This is a contradiction.
+    Therefore, at least one of $m$ or $n$ must be even.
   \end{proof}
 \end{proposition}
 
