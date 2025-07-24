@@ -1,10 +1,62 @@
-\documentclass{article}
+\documentclass[12pt]{article}
+
+\usepackage{setspace}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amsthm,amssymb,amsfonts}
+
+% Create the margins required for class %
+\oddsidemargin=-0.5cm                 	%
+\setlength{\textwidth}{6.5in}         	%
+\addtolength{\voffset}{-20pt}        		%
+\addtolength{\headsep}{25pt}           	%
+
+% Tells LaTeX to allow you to enter information in the heading
+\pagestyle{myheadings}
+\markright{Yetong Li\hfill \today \hfill}
+
+% Use double spacing throughout the document
+% \doublespacing
+
+% Define a bunch of theorem-like environments
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{problem}{Problem}
+\newtheorem{question}{Question}
+\newtheorem{corollary}{Corollary}
+\newtheorem{proposition}{Proposition}
 
 \begin{document}
 
-\title{Unclassified Exercise from \it{Abstract Algebra}}
-\author{Yetong Li}
-\date{\today}
+% -------------------------------------------------------------- %
+%                         Starts here                            %
+% -------------------------------------------------------------- %
+
+\title{Unclassified Proofs}
+\author{Yetong Li \\ A Book of Abstract Algebra}
+
 \maketitle
+
+
+\begin{proposition}
+  Let $n \in \mathbb{N}$. Prove that $\sum_{i=1}^n i = \frac{n(n+1)}{2}$.
+  \begin{proof}
+    We proceed by induction on $n$. \\
+    \textbf{Base case:} For $n=1$, $\sum_{i=1}^1 i = 1 = \frac{1 \cdot 2}{2}$. \\
+    \textbf{Inductive step:} Assume true for $n=k$: $\sum_{i=1}^k i = \frac{k(k+1)}{2}$. \\
+    For $n=k+1$:
+    \begin{align*}
+      \sum_{i=1}^{k+1} i & = \left(\sum_{i=1}^k i\right) + (k+1) \\
+                         & = \frac{k(k+1)}{2} + (k+1)            \\
+                         & = \frac{k(k+1) + 2(k+1)}{2}           \\
+                         & = \frac{(k+1)(k+2)}{2}
+    \end{align*}
+    Thus, the result holds for all $n \in \mathbb{N}$.
+  \end{proof}
+\end{proposition}
+
+
+% -------------------------------------------------------------- %
+%                          Ends here                             %
+% -------------------------------------------------------------- %
 
 \end{document}
