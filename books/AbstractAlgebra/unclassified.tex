@@ -17,6 +17,13 @@
 % Use double spacing throughout the document
 % \doublespacing
 
+% Define commonly used sets
+\newcommand{\N}{\mathbb{N}} % Natural numbers
+\newcommand{\Z}{\mathbb{Z}} % Integers
+\newcommand{\R}{\mathbb{R}} % Real numbers
+\newcommand{\Q}{\mathbb{Q}} % Rational numbers
+\newcommand{\C}{\mathbb{C}} % Complex numbers
+
 % Define a bunch of theorem-like environments
 \newtheorem{theorem}{Theorem}
 \newtheorem{lemma}{Lemma}
@@ -38,19 +45,99 @@
 
 
 \begin{proposition}
-  Let $n \in \mathbb{N}$. Prove that $\sum_{i=1}^n i = \frac{n(n+1)}{2}$.
+  In any finite group $G$, the number of elements not equal to their own inverse is even.
   \begin{proof}
-    We proceed by induction on $n$. \\
-    \textbf{Base case:} For $n=1$, $\sum_{i=1}^1 i = 1 = \frac{1 \cdot 2}{2}$. \\
-    \textbf{Inductive step:} Assume true for $n=k$: $\sum_{i=1}^k i = \frac{k(k+1)}{2}$. \\
-    For $n=k+1$:
-    \begin{align*}
-      \sum_{i=1}^{k+1} i & = \left(\sum_{i=1}^k i\right) + (k+1) \\
-                         & = \frac{k(k+1)}{2} + (k+1)            \\
-                         & = \frac{k(k+1) + 2(k+1)}{2}           \\
-                         & = \frac{(k+1)(k+2)}{2}
-    \end{align*}
-    Thus, the result holds for all $n \in \mathbb{N}$.
+    Let $S = \{ x \in G \mid x \neq x^{-1} \}$.
+    For each $x \in S$, its inverse $x^{-1}$ is also in $S$, and $x \neq x^{-1}$.
+    Thus, $S$ can be partitioned into distinct pairs $(x, x^{-1})$.
+    The number of elements in $S$ is therefore even, since every element appears in exactly one pair.
+  \end{proof}
+\end{proposition}
+
+
+\begin{proposition}
+  In any finite group $G$, the number of elements in $G$ that are equal to its own inverse is odd or even,
+  depending on whether $|G|$ is odd or even.
+  \begin{proof}
+    Let $A = \{x \in G : x \neq x^{-1}\}$ and $B = \{x \in G : x = x^{-1}\}$.
+    Note that $A \cap B = \emptyset$ and $A \cup B = G$. This means that $|G| = |A| + |B|$.
+    From the previous proposition, we know that $|A|$ is even.
+    Therefore, if $|G|$ is odd, then $|B|$ must also be odd, and if $|G|$ is even, then $|B|$ must also be even.
+    Thus, the number of elements in $G$ that are equal to its own inverse is odd if and only if $|G|$ is odd.
+  \end{proof}
+\end{proposition}
+
+
+\begin{proposition}
+  Prove that $(bab^{-1})^n = ba^nb^{-1}$, for all $n \in \N$.
+  \begin{proof}
+    We will prove this by induction on $n$.
+    \begin{itemize}
+      \item Base case: For $n = 1$, we have $(bab^{-1})^1 = bab^{-1} = ba^1b^{-1}$, which holds true.
+      \item Inductive step: Assume it holds for some $n = k$, i.e., $(bab^{-1})^k = ba^kb^{-1}$.
+            We need to show it holds for $n = k + 1$:
+            \begin{align*}
+              (bab^{-1})^{k+1} & = (bab^{-1})^k \cdot (bab^{-1}) \\
+                               & = (ba^kb^{-1})(bab^{-1})        \\
+                               & = ba^kb^{-1}bab^{-1}            \\
+                               & = ba^k(b^{-1}b)ab^{-1}          \\
+                               & = ba^{k+1}b^{-1}
+            \end{align*}
+            Thus, the inductive step holds.
+    \end{itemize}
+    By the principle of mathematical induction, we conclude that $(bab^{-1})^n = ba^nb^{-1}$ for all $n \in \N$.
+  \end{proof}
+\end{proposition}
+
+
+\begin{proposition}
+  Let $G$ be an abelian group. Let $H = \{x \in G : x^n = e\}$. Prove that $H \leqslant G$.
+  \begin{proof}
+    It's clear that $H \subseteq G$. We need to show that $H$ is closed under multiplication and closed under inverses.
+    \begin{itemize}
+      \item Closure under multiplication: Let $x, y \in H$. Then $x^n = e$ and $y^n = e$.
+            We need to show that $(xy)^n = e$:
+            \begin{align*}
+              (xy)^n & = x^n y^n &  & \text{[By abelian]} \\
+                     & = ee                               \\
+                     & = e.
+            \end{align*}
+            Thus, $xy \in H$.
+      \item Closure under inverses: Let $x \in H$. Then $x^n = e$.
+            We need to show that $x^{-1} \in H$:
+            \begin{align*}
+              (x^{-1})^n & = (x^n)^{-1} &  & \text{[By the property of inverses]} \\
+                         & = e^{-1}                                               \\
+                         & = e.
+            \end{align*}
+            Thus, $x^{-1} \in H$.
+    \end{itemize}
+    Since $H$ is closed under multiplication and inverses, we conclude that $H$ is a subgroup of $G$.
+  \end{proof}
+\end{proposition}
+
+
+\begin{proposition}
+  Let $G$ be an abelian group. Let $H = \{x \in G : \exists y \in G, x = y^2\}$. Prove that $H \leqslant G$.
+  \begin{proof}
+    It's clear that $H \subseteq G$. We need to show that $H$ is closed under multiplication and closed under inverses.
+    \begin{itemize}
+      \item Closure under multiplication: Let $x, y \in H$. Then there exist $a, b \in G$ such that $x = a^2$ and $y = b^2$.
+            We need to show that $xy \in H$:
+            \begin{align*}
+              xy & = a^2b^2 &  & \text{[By the definition of } x \text{ and } y]          \\
+                 & = (ab)^2 &  & \text{[By the property of exponents in abelian groups]}.
+            \end{align*}
+            Thus, $xy \in H$.
+      \item Closure under inverses: Let $x \in H$. Then there exists $y \in G$ such that $x = y^2$.
+            We need to show that $x^{-1} \in H$:
+            \begin{align*}
+              x^{-1} & = (y^2)^{-1} &  & \text{[By the property of inverses]}                     \\
+                     & = (y^{-1})^2 &  & \text{[By the property of exponents in abelian groups]}.
+            \end{align*}
+            Thus, $x^{-1} \in H$.
+    \end{itemize}
+    Since $H$ is closed under multiplication and inverses, we conclude that $H$ is a subgroup of $G$.
   \end{proof}
 \end{proposition}
 
