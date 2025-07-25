@@ -1,0 +1,83 @@
+\documentclass[12pt]{article}
+
+\usepackage{setspace}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amsthm,amssymb,amsfonts}
+
+% Create the margins required for class %
+\oddsidemargin=-0.5cm                 	%
+\setlength{\textwidth}{6.5in}         	%
+\addtolength{\voffset}{-20pt}        		%
+\addtolength{\headsep}{25pt}           	%
+
+% Tells LaTeX to allow you to enter information in the heading
+\pagestyle{myheadings}
+\markright{Yetong Li\hfill \today \hfill}
+
+% Use double spacing throughout the document
+% \doublespacing
+
+% Define commonly used sets
+\newcommand{\N}{\mathbb{N}} % Natural numbers
+\newcommand{\Z}{\mathbb{Z}} % Integers
+\newcommand{\R}{\mathbb{R}} % Real numbers
+\newcommand{\Q}{\mathbb{Q}} % Rational numbers
+\newcommand{\C}{\mathbb{C}} % Complex numbers
+
+% Define a bunch of theorem-like environments
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{problem}{Problem}
+\newtheorem{question}{Question}
+\newtheorem{corollary}{Corollary}
+\newtheorem{proposition}{Proposition}
+
+\begin{document}
+
+% -------------------------------------------------------------- %
+%                         Starts here                            %
+% -------------------------------------------------------------- %
+
+\title{Chapter 4: Proof Exercises}
+\author{Yetong Li \\ Proofs: Long Form Mathematical Textbook}
+
+\maketitle
+
+
+\begin{proposition}
+  Suppose $A_1, A_2, \ldots, A_n$ are subsets of a set $U$.
+  Prove that the following holds for every $n \in \N$.
+  \[
+    \left(\bigcap_{i=1}^n A_i\right)^c = \bigcup_{i=1}^n A_i^c
+  \]
+  \begin{proof}
+    First, we use the fact that unions and intersections are associative.
+    Thus,
+    \[
+      A_1 \cap A_2 \cap \ldots \cap A_n = (((A_1 \cap A_2) \cap A_3) \cap \ldots) \cap A_n
+    \]
+    Then we proceed by induction on $n$.
+    \begin{itemize}
+      \item Base case: $n = 2$. $(A_1 \cap A_2)^c = A_1^c \cup A_2^c$ holds by De Morgan's laws.
+      \item Inductive step: Assume the statement holds for $n = k$.
+            That is, assume $(A_1 \cap A_2 \cap \ldots \cap A_k)^c = A_1^c \cup A_2^c \cup \ldots \cup A_k^c$.
+            Then for $n = k + 1$,
+            \begin{align*}
+              (A_1 \cap A_2 \cap \ldots \cap A_k \cap A_{k+1})^c & =
+              ((A_1 \cap A_2 \cap \ldots \cap A_k) \cap A_{k+1})^c                                                            \\
+                                                                 & = (A_1 \cap A_2 \cap \ldots \cap A_k)^c \cup A_{k+1}^c     \\
+                                                                 & = (A_1^c \cup A_2^c \cup \ldots \cup A_k^c) \cup A_{k+1}^c \\
+                                                                 & = A_1^c \cup A_2^c \cup \ldots \cup A_k^c \cup A_{k+1}^c   \\
+                                                                 & = \bigcup_{i=1}^{k+1} A_i^c
+            \end{align*}
+    \end{itemize}
+    By the principle of mathematical induction, the statement holds for all $n \in \N$.
+  \end{proof}
+\end{proposition}
+
+
+% -------------------------------------------------------------- %
+%                          Ends here                             %
+% -------------------------------------------------------------- %
+
+\end{document}
