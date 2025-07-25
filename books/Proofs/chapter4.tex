@@ -44,7 +44,7 @@
 \maketitle
 
 
-\begin{proposition}
+\begin{proposition}[Exercise 4.18]
   Suppose $A_1, A_2, \ldots, A_n$ are subsets of a set $U$.
   Prove that the following holds for every $n \in \N$.
   \[
@@ -72,6 +72,68 @@
             \end{align*}
     \end{itemize}
     By the principle of mathematical induction, the statement holds for all $n \in \N$.
+  \end{proof}
+\end{proposition}
+
+
+\begin{proposition}[Exercise 4.16]
+  For all $x \in \R$, prove that if $x > -1$, then for all $n \in \N, 1 + nx \le (1 + x)^n$.
+  \begin{proof}
+    First, we do case analysis on $x$.
+    \begin{itemize}
+      \item If $x = 0$, then $1 + nx = 1$ and $(1 + x)^n = 1^n = 1$.
+            Thus, $1 + nx \le (1 + x)^n$ holds.
+      \item If $x > 0$, then proceed by induction on $n$.
+            \begin{itemize}
+              \item Base case: $n = 1$. Then $1 + 1x = 1 + x = (1 + x)^1$.
+                    Thus, $1 + nx \le (1 + x)^n$ holds.
+              \item Inductive step: Assume the statement holds for $n = k$.
+                    That is, assume $1 + kx \le (1 + x)^k$.
+                    Then for $n = k + 1$,
+                    \begin{align*}
+                      1 + (k + 1)x & = (1 + kx) + x    \\
+                                   & \le (1 + x)^k + x \\
+                    \end{align*}
+                    Note that since $1 + x > 1$, therefore $1 \le (1 + x)^k$ holds, and so does $x \le x(1 + x)^k$.
+                    Thus, we have
+                    \begin{align*}
+                      1 + (k + 1)x & \le (1 + x)^k + x          \\
+                                   & \le (1 + x)^k + x(1 + x)^k \\
+                                   & = (1 + x)^k(1 + x)         \\
+                                   & = (1 + x)^{k + 1}
+                    \end{align*}
+                    Therefore, we've proved $1 + (k + 1)x \le (1 + x)^{k + 1}$.
+                    Thus by the principle of mathematical induction, the statement holds for all $n \in \N$.
+            \end{itemize}
+      \item If $-1 < x < 0$, then we can rewrite the statement as
+            \[
+              \forall n \in \N, 1 - nx \le (1 - x)^n, \text{where } 0 < x < 1
+            \]
+            Again, we proceed by induction on $n$.
+            \begin{itemize}
+              \item Base case: $n = 1$. Then $1 - 1x = 1 + x = (1 - x)^1$.
+                    Thus, $1 - nx \le (1 - x)^n$ holds.
+              \item Inductive step: Assume the statement holds for $n = k$.
+                    That is, assume $1 - kx \le (1 - x)^k$.
+                    Then for $n = k + 1$,
+                    \begin{align*}
+                      1 - (k + 1)x & = (1 - kx) - x    \\
+                                   & \le (1 - x)^k - x \\
+                    \end{align*}
+                    Note that somce $0 < x < 1$, then $0 < 1 - x < 1$.
+                    Therefore, $(1 - x)^k \in (0, 1)$ and $1 \ge (1 - x)^k$ and $x \ge x(1 - x)^k$.
+                    Thus, we have
+                    \begin{align*}
+                      1 - (k + 1)x & \le (1 - x)^k - x          \\
+                                   & \le (1 - x)^k - x(1 - x)^k \\
+                                   & = (1 - x)^k(1 - x)         \\
+                                   & = (1 - x)^{k + 1}
+                    \end{align*}
+                    Therefore, we've proved $1 - (k + 1)x \le (1 - x)^{k + 1}$.
+                    Thus by the principle of mathematical induction, the statement holds for all $n \in \N$.
+            \end{itemize}
+    \end{itemize}
+    Therefore, for all $x \in \R$ such that $x > -1$, we have shown that for all $n \in \N$, $1 + nx \le (1 + x)^n$.
   \end{proof}
 \end{proposition}
 
