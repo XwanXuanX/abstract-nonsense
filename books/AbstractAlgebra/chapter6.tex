@@ -1,0 +1,89 @@
+\documentclass[12pt]{article}
+
+\usepackage{setspace}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amsthm,amssymb,amsfonts}
+
+% Create the margins required for class %
+\oddsidemargin=-0.5cm                 	%
+\setlength{\textwidth}{6.5in}         	%
+\addtolength{\voffset}{-20pt}        		%
+\addtolength{\headsep}{25pt}           	%
+
+% Tells LaTeX to allow you to enter information in the heading
+\pagestyle{myheadings}
+\markright{Yetong Li\hfill \today \hfill}
+
+% Use double spacing throughout the document
+% \doublespacing
+
+% Define commonly used sets
+\newcommand{\N}{\mathbb{N}} % Natural numbers
+\newcommand{\Z}{\mathbb{Z}} % Integers
+\newcommand{\R}{\mathbb{R}} % Real numbers
+\newcommand{\Q}{\mathbb{Q}} % Rational numbers
+\newcommand{\C}{\mathbb{C}} % Complex numbers
+
+% Define a bunch of theorem-like environments
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{problem}{Problem}
+\newtheorem{question}{Question}
+\newtheorem{corollary}{Corollary}
+\newtheorem{proposition}{Proposition}
+
+\begin{document}
+
+% -------------------------------------------------------------- %
+%                         Starts here                            %
+% -------------------------------------------------------------- %
+
+\title{Chapter 6: Functions}
+\author{Yetong Li \\ A Book of Abstract Algebra}
+
+\maketitle
+
+
+\begin{proposition}[Exercise G.1]
+  Let $A, B, C$ be sets, and let $f: A \to B$ and $g: B \to C$ be functions.
+  Prove that if $g \circ f$ is injective, then $f$ is injective.
+  \begin{proof}
+    Proceed by contradiction.
+    Assume that $f$ is not injective, then there exist $a_1, a_2 \in A$ such that $a_1 \neq a_2$ and $f(a_1) = f(a_2)$.
+    Since $g \circ f$ is injective, we have:
+    \begin{align*}
+      [g \circ f](a_1) = [g \circ f](a_2) & \iff g(f(a_1)) = g(f(a_2)) \\
+                                          & \implies a_1 = a_2
+    \end{align*}
+    Since we have $f(a_1) = f(a_2)$, it follows that $g(f(a_1)) = g(f(a_2))$.
+    Thus, we would get that $a_1 = a_2$, which contradicts our assumption that $a_1 \neq a_2$.
+    Therefore, $f$ must be injective.
+  \end{proof}
+\end{proposition}
+
+
+\begin{proposition}[Exercise G.2]
+  Let $A, B, C$ be sets, and let $f: A \to B$ and $g: B \to C$ be functions.
+  Prove that if $g \circ f$ is surjective, then $g$ is surjective.
+  \begin{proof}
+    Let $c \in C$ be an arbitrary element.
+    Since $g \circ f$ is surjective, there exists some $a \in A$ such that:
+    \[
+      [g \circ f](a) = c
+    \]
+    This means that:
+    \[
+      g(f(a)) = c
+    \]
+    Let $b = f(a)$, then we have $b \in B$ and $g(b) = c$.
+    Since $c$ was arbitrary, this shows that for every element in $C$, there exists a corresponding element in $B$ such that $g(b) = c$.
+    Therefore, $g$ is surjective.
+  \end{proof}
+\end{proposition}
+
+
+% -------------------------------------------------------------- %
+%                          Ends here                             %
+% -------------------------------------------------------------- %
+
+\end{document}
