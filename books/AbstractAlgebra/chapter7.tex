@@ -1,0 +1,381 @@
+\documentclass[12pt]{article}
+
+\usepackage{setspace}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amsthm,amssymb,amsfonts}
+
+% Create the margins required for class %
+\oddsidemargin=-0.5cm                 	%
+\setlength{\textwidth}{6.5in}         	%
+\addtolength{\voffset}{-20pt}        		%
+\addtolength{\headsep}{25pt}           	%
+
+% Tells LaTeX to allow you to enter information in the heading
+\pagestyle{myheadings}
+\markright{Yetong Li\hfill \today \hfill}
+
+% Use double spacing throughout the document
+% \doublespacing
+
+% Define commonly used sets
+\newcommand{\N}{\mathbb{N}} % Natural numbers
+\newcommand{\Z}{\mathbb{Z}} % Integers
+\newcommand{\R}{\mathbb{R}} % Real numbers
+\newcommand{\Q}{\mathbb{Q}} % Rational numbers
+\newcommand{\C}{\mathbb{C}} % Complex numbers
+
+% Define a bunch of theorem-like environments
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{problem}{Problem}
+\newtheorem{question}{Question}
+\newtheorem{corollary}{Corollary}
+\newtheorem{proposition}{Proposition}
+
+\begin{document}
+
+% -------------------------------------------------------------- %
+%                         Starts here                            %
+% -------------------------------------------------------------- %
+
+\title{Chapter 7: Groups of Permutations}
+\author{Yetong Li \\ A Book of Abstract Algebra}
+
+\maketitle
+
+
+\begin{proposition}[Exercise D.1]
+  For each integer $n$, define $f_n(x) = x + n$.
+  Prove that for each integer $n$, $f_n$ is a permutation of $\R$,
+  that is, $f_n \in S_{\R}$.
+  \begin{proof}
+    To show that a function is a permutation of a set, we need to show that it is bijective,
+    and is a function from the set to itself.
+    It is obvious that $f_n$ is a function from $\R$ to $\R$.
+    Now we will show that $f_n$ is injective and surjective.
+    \begin{itemize}
+      \item \textbf{Injective:} Assume $f_n(x_1) = f_n(x_2)$ for some $x_1, x_2 \in \R$.
+            Then we have:
+            \[
+              x_1 + n = x_2 + n \implies x_1 = x_2
+            \]
+            Thus, $f_n$ is injective.
+
+      \item \textbf{Surjective:} For any $y \in \R$, we need to find an $x \in \R$ such that $f_n(x) = y$.
+            Let $x = y - n$. Then:
+            \[
+              f_n(x) = (y - n) + n = y
+            \]
+            Hence, for every $y \in \R$, there exists an $x \in \R$ such that $f_n(x) = y$.
+            Therefore, $f_n$ is surjective.
+    \end{itemize}
+    Since $f_n$ is both injective and surjective, it is bijective.
+    Thus, $f_n$ is a permutation of $\R$, or $f_n \in S_{\R}$.
+  \end{proof}
+\end{proposition}
+
+
+\begin{proposition}[Exercise D.2]
+  For each integer $n$, define $f_n(x) = x + n$.
+  Prove that $f_n \circ f_m = f_{n+m}$ and $f^{-1}_n = f_{-n}$.
+  \begin{proof}
+    To prove the first part, we need to show that:
+    \[
+      f_n \circ f_m(x) = f_{n+m}(x)
+    \]
+    Let's compute the left-hand side:
+    \[
+      f_n(f_m(x)) = f_n(x + m) = (x + m) + n = x + (m + n) = f_{n+m}(x)
+    \]
+    Thus, we have shown that $f_n \circ f_m = f_{n+m}$.
+
+    Now, for the second part, we need to show that:
+    \[
+      f^{-1}_n(x) = f_{-n}(x)
+    \]
+    The inverse function $f^{-1}_n$ is defined such that:
+    \[
+      f^{-1}_n(f_n(x)) = x
+    \]
+    Let's compute $f^{-1}_n(x)$:
+    \[
+      f^{-1}_n(x) = x - n
+    \]
+    Now, let's compute $f_{-n}(x)$:
+    \[
+      f_{-n}(x) = x - n
+    \]
+    Since both expressions are equal, we have $f^{-1}_n = f_{-n}$.
+    Therefore, we have shown both parts of the proposition.
+  \end{proof}
+\end{proposition}
+
+
+\begin{proposition}[Exercise D.3]
+  For each integer $n$, define $f_n(x) = x + n$.
+  Let $G = \{f_n : n \in \Z\}$. Prove that $G$ is a subgroup of $S_{\R}$.
+  \begin{proof}
+    To show that $G$ is a subgroup of $S_{\R}$, we need to show that $G$ is
+    closed under composition, and closed under inverses.
+    \begin{itemize}
+      \item \textbf{Closure under composition:} Let $f_n, f_m \in G$.
+            Then we have:
+            \[
+              f_n \circ f_m(x) = f_{n+m}(x)
+            \]
+            Since $n + m \in \Z$, it follows that $f_{n+m} \in G$.
+            Thus, $G$ is closed under composition.
+
+      \item \textbf{Closure under inverses:} For any $f_n \in G$, we have:
+            \[
+              f^{-1}_n(x) = f_{-n}(x)
+            \]
+            Since $-n \in \Z$, it follows that $f_{-n} \in G$.
+            Therefore, every element in $G$ has an inverse in $G$.
+    \end{itemize}
+    Since $G$ is closed under composition and inverses, it is a subgroup of $S_{\R}$.
+  \end{proof}
+\end{proposition}
+
+
+\begin{proposition}[Exercise D.4]
+  For each integer $n$, define $f_n(x) = x + n$.
+  Prove that $G$ is cyclic.
+  \begin{proof}
+    A group is cyclic if there exists an element $g \in G$ such that every element of $G$ can be expressed as a power of $g$.
+    In this case, we can take $g = f_1$, which corresponds to the function $f_1(x) = x + 1$.
+    We can express any element $f_n \in G$ as:
+    \[
+      f_n = f_1^n
+    \]
+    \begin{itemize}
+      \item For $n \geq 0$, we have:
+            \[
+              f_n = f_1^n(x) = x + n
+            \]
+      \item For $n < 0$, we can express it as:
+            \[
+              f_n = f_{-1}^{-n}(x) = x - n
+            \]
+    \end{itemize}
+    Since every element of $G$ can be expressed as a power of $f_1$, it follows that $G$ is cyclic.
+    Therefore, $G$ is a cyclic group generated by $f_1$.
+  \end{proof}
+\end{proposition}
+
+
+\begin{proposition}[Exercise E.1]
+  For any pair of real numbers $a \neq 0$ and $b$, define a function $f_{a,b}(x) = ax + b$.
+  Prove that $f_{a,b}$ is a permutation of $\R$, that is, $f_{a,b} \in S_{\R}$.
+  \begin{proof}
+    To show that $f_{a,b}$ is a permutation of $\R$, we need to show that it is bijective,
+    and is a function from $\R$ to itself.
+    It is clear that $f_{a,b}$ is a function from $\R$ to $\R$.
+    Now we will show that $f_{a,b}$ is injective and surjective.
+    \begin{itemize}
+      \item \textbf{Injective:} Assume $f_{a,b}(x_1) = f_{a,b}(x_2)$ for some $x_1, x_2 \in \R$.
+            Then we have:
+            \[
+              ax_1 + b = ax_2 + b \implies ax_1 = ax_2
+            \]
+            Since $a \neq 0$, we can divide both sides by $a$:
+            \[
+              x_1 = x_2
+            \]
+            Thus, $f_{a,b}$ is injective.
+
+      \item \textbf{Surjective:} For any $y \in \R$, we need to find an $x \in \R$ such that $f_{a,b}(x) = y$.
+            Let $x = \frac{y - b}{a}$. Then:
+            \[
+              f_{a,b}(x) = a\left(\frac{y - b}{a}\right) + b = y - b + b = y
+            \]
+            Hence, for every $y \in \R$, there exists an $x \in \R$ such that $f_{a,b}(x) = y$.
+            Therefore, $f_{a,b}$ is surjective.
+    \end{itemize}
+    Since $f_{a,b}$ is both injective and surjective, it is bijective.
+    Thus, $f_{a,b}$ is a permutation of $\R$, or $f_{a,b} \in S_{\R}$.
+  \end{proof}
+\end{proposition}
+
+
+\begin{proposition}[Exercise E.2]
+  For any pair of real numbers $a \neq 0$ and $b$, define a function $f_{a,b}(x) = ax + b$.
+  Prove that $f_{a,b} \circ f_{c,d} = f_{ac, ad + b}$.
+  \begin{proof}
+    To prove this, we need to compute the composition of the two functions:
+    \[
+      f_{a,b} \circ f_{c,d}(x) = f_{a,b}(f_{c,d}(x))
+    \]
+    First, we compute $f_{c,d}(x)$:
+    \[
+      f_{c,d}(x) = cx + d
+    \]
+    Now, we substitute this into $f_{a,b}$:
+    \[
+      f_{a,b}(f_{c,d}(x)) = f_{a,b}(cx + d) = a(cx + d) + b
+    \]
+    Simplifying this gives:
+    \[
+      = acx + ad + b
+    \]
+    Thus, we have:
+    \[
+      f_{a,b} \circ f_{c,d}(x) = acx + (ad + b)
+    \]
+    Therefore, we can express this as:
+    \[
+      f_{ac, ad + b}(x)
+    \]
+    Hence, we have shown that:
+    \[
+      f_{a,b} \circ f_{c,d} = f_{ac, ad + b}
+    \]
+  \end{proof}
+\end{proposition}
+
+
+\begin{proposition}[Exercise E.3]
+  For any pair of real numbers $a \neq 0$ and $b$, define a function $f_{a,b}(x) = ax + b$.
+  Prove that $f_{a,b}^{-1} = f_{1/a, -b/a}$.
+  \begin{proof}
+    To find the inverse of the function $f_{a,b}(x) = ax + b$, we need to find a function $g(x)$ such that:
+    \[
+      f_{a,b}(g(x)) = x
+    \]
+    Let's denote the inverse function as $f_{a,b}^{-1}(x)$.
+    We can set up the equation:
+    \[
+      f_{a,b}^{-1}(x) = y \implies ax + b = y
+    \]
+    Rearranging this gives:
+    \[
+      ax = y - b \implies x = \frac{y - b}{a}
+    \]
+    Thus, we have:
+    \[
+      f_{a,b}^{-1}(x) = \frac{x - b}{a}
+    \]
+    Now, we can express this in terms of a new function:
+    \[
+      f_{1/a, -b/a}(x) = \frac{1}{a}x - \frac{b}{a}
+    \]
+    Therefore, we have:
+    \[
+      f_{a,b}^{-1}(x) = f_{1/a, -b/a}(x)
+    \]
+    Hence, we have shown that:
+    \[
+      f_{a,b}^{-1} = f_{1/a, -b/a}
+    \]
+  \end{proof}
+\end{proposition}
+
+
+\begin{proposition}[Exercise E.4]
+  For any pair of real numbers $a \neq 0$ and $b$, define a function $f_{a,b}(x) = ax + b$.
+  Let $G = \{f_{a,b} : a \in \R, b \in \R, a\neq 0\}$. Show that $G$ is a subgroup of $S_{\R}$.
+  \begin{proof}
+    To show that $G$ is a subgroup of $S_{\R}$, we need to show that $G$ is closed under composition and inverses.
+    \begin{itemize}
+      \item \textbf{Closure under composition:} Let $f_{a,b}, f_{c,d} \in G$.
+            Then we have:
+            \[
+              f_{a,b} \circ f_{c,d}(x) = f_{ac, ad + b}(x)
+            \]
+            Since $a, c \neq 0$, it follows that $ac \neq 0$ and $ad + b$ is a real number.
+            Thus, $f_{ac, ad + b} \in G$, showing closure under composition.
+
+      \item \textbf{Closure under inverses:} For any $f_{a,b} \in G$, we have:
+            \[
+              f_{a,b}^{-1}(x) = f_{1/a, -b/a}(x)
+            \]
+            Since $a \neq 0$, it follows that $1/a \neq 0$ and $-b/a$ is a real number.
+            Therefore, $f_{1/a, -b/a} \in G$, showing closure under inverses.
+    \end{itemize}
+    Since $G$ is closed under composition and inverses, it is a subgroup of $S_{\R}$.
+  \end{proof}
+\end{proposition}
+
+
+\begin{proposition}[Exercise H.1]
+  Let $A$ be a set and $a \in A$. Let $G$ be the subset of $S_A$ consisting of all permutations $f$ of $A$ such that $f(a) = a$.
+  Prove that $G$ is a subgroup of $S_A$.
+  \begin{proof}
+    To show that $G$ is a subgroup of $S_A$, we need to show that $G$ is closed under composition and inverses.
+    \begin{itemize}
+      \item \textbf{Closure under composition:} Let $f, g \in G$.
+            Then both $f(a) = a$ and $g(a) = a$.
+            We need to show that $(f \circ g)(a) = a$:
+            \[
+              (f \circ g)(a) = f(g(a)) = f(a) = a
+            \]
+            Thus, $f \circ g \in G$, showing closure under composition.
+
+      \item \textbf{Closure under inverses:} For any $f \in G$, we have $f(a) = a$.
+            We need to show that $f^{-1}(a) = a$:
+            \[
+              f^{-1}(f(a)) = f^{-1}(a) = a
+            \]
+            Thus, $f^{-1} \in G$, showing closure under inverses.
+    \end{itemize}
+    Since $G$ is closed under composition and inverses, it is a subgroup of $S_A$.
+  \end{proof}
+\end{proposition}
+
+
+\begin{proposition}[Exercise H.2]
+  If $f$ is a permutation of $A$ and $a \in A$, we say that $f$ moves $a$ if $f(a) \neq a$.
+  Let $A$ be an infinite set and let $G$ be the subset of $S_A$ consisting of all permutations $f$ of $A$ such that $f$ moves only finitely many elements of $A$.
+  Prove that $G$ is a subgroup of $S_A$.
+  \begin{proof}
+    To show that $G$ is a subgroup of $S_A$, we need to show that $G$ is closed under composition and inverses.
+    \begin{itemize}
+      \item \textbf{Closure under composition:} Let $f, g \in G$.
+            Since both $f$ and $g$ move only finitely many elements of $A$, let the sets of moved elements be $M_f$ and $M_g$, respectively.
+            The composition $(f \circ g)$ will move an element $a \in A$ if either $f(a) \neq a$ or $g(a) \neq a$.
+            However, since both $M_f$ and $M_g$ are finite, the set of elements moved by $(f \circ g)$, denoted as $M_{f \circ g}$, is also finite:
+            \[
+              M_{f \circ g} = M_f \cup M_g
+            \]
+            Thus, $(f \circ g) \in G$, showing closure under composition.
+
+      \item \textbf{Closure under inverses:} For any $f \in G$, the set of elements moved by $f^{-1}$ is the same as those moved by $f$,
+            since moving an element in one direction can be undone by moving it back in the opposite direction.
+            Therefore, if $f$ moves only finitely many elements, so does $f^{-1}$.
+            Thus, $f^{-1} \in G$, showing closure under inverses.
+    \end{itemize}
+    Since $G$ is closed under composition and inverses, it is a subgroup of $S_A$.
+  \end{proof}
+\end{proposition}
+
+
+\begin{proposition}[Exercise H.3]
+  Let $A$ be a finite set, and $B$ a subset of $A$.
+  Let $G$ be the subset of $S_A$ consisting of all permutations $f$ of $A$ such that $f(x) \in B$ for all $x \in B$.
+  Prove that $G$ is a subgroup of $S_A$.
+  \begin{proof}
+    To show that $G$ is a subgroup of $S_A$, we need to show that $G$ is closed under composition and inverses.
+    \begin{itemize}
+      \item \textbf{Closure under composition:} Let $f, g \in G$.
+            For any $x \in B$, we have:
+            \[
+              f(x) \in B \quad \text{and} \quad g(f(x)) \in B
+            \]
+            Therefore, $(f \circ g)(x) = g(f(x)) \in B$ for all $x \in B$.
+            Thus, $f \circ g \in G$, showing closure under composition.
+
+      \item \textbf{Closure under inverses:} For any $f \in G$, we need to show that $f^{-1}(x) \in B$ for all $x \in B$.
+            Since $f$ is a permutation, it is bijective, and thus for every $y \in B$, there exists a unique $x \in A$ such that $f(x) = y$.
+            Since $f(x) \in B$, it follows that $f^{-1}(y) \in B$ for all $y \in B$.
+            Therefore, $f^{-1} \in G$, showing closure under inverses.
+    \end{itemize}
+    Since $G$ is closed under composition and inverses, it is a subgroup of $S_A$.
+  \end{proof}
+\end{proposition}
+
+
+% -------------------------------------------------------------- %
+%                          Ends here                             %
+% -------------------------------------------------------------- %
+
+\end{document}
