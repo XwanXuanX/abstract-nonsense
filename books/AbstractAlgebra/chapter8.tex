@@ -116,6 +116,39 @@
 \end{lemma}
 
 
+\begin{proposition}[Exercise B.3]
+  Let $\alpha$ be a cycle of length $s$, say $\alpha = (a_1 a_2 \ldots a_s)$.
+  Show that $\alpha^{-1} = \alpha^{s-1}$.
+  \begin{proof}
+    Let $a_i \in \{a_1, a_2, \cdots , a_s\}$.
+    We need to prove that, $\alpha^{-1}(a_i) = \alpha^{s-1}(a_i)$.
+    By the definition of a cycle, we have:
+    \[
+      \alpha(a_i) = a_{i + 1 \mod s}
+    \]
+    So, $\alpha^{-1}$ must send $a_{i + 1 \mod s}$ back to $a_i$:
+    \[
+      \alpha^{-1}(a_{i + 1 \mod s}) = a_i \implies \alpha^{-1}(a_i) = a_{i - 1 \mod s}
+    \]
+    Apply $\alpha$ $s - 1$ times means moving $a_i$ forward $s - 1$ positions in the cycle.
+    Now, we compute $\alpha^{s-1}(a_i)$:
+    \begin{align*}
+      \alpha^{s-1}(a_i) & = a_{i + (s - 1) \mod s} &  &                                            \\
+                        & = a_{i - 1 \mod s}       &  & \text{By } i + (s - 1) \equiv i - 1 \mod s \\
+    \end{align*}
+    Thus, we have shown that:
+    \[
+      \alpha^{-1}(a_i) = \alpha^{s-1}(a_i), \forall a_i \in \{a_1, a_2, \cdots , a_s\}
+    \]
+    For $y \notin \{a_1, a_2, \cdots, a_s\}$, both $\alpha^{-1}(y)$ and $\alpha^{s-1}(y)$ will return $y$ since they do not affect elements outside the cycle.
+    Therefore, we conclude that:
+    \[
+      \alpha^{-1} = \alpha^{s-1}
+    \]
+  \end{proof}
+\end{proposition}
+
+
 % -------------------------------------------------------------- %
 %                          Ends here                             %
 % -------------------------------------------------------------- %
