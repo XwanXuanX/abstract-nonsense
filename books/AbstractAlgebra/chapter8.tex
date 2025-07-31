@@ -148,6 +148,88 @@
   \end{proof}
 \end{proposition}
 
+\begin{proposition}[Exercise B.4]
+  Let $\alpha$ be a cycle of length $s$, say $\alpha = (a_1 a_2 \ldots a_s)$.
+  Prove that $\alpha^2$ is a cycle if and only if $s$ is odd.
+  \begin{proof}
+    We will prove both directions of the statement.
+    \begin{itemize}
+      \item \textbf{If $\alpha^2$ is a cycle, then $s$ is odd:}
+            Assume $\alpha^2$ is a cycle of length $s$.
+            Then for $a_i \in \{a_1, a_2, \ldots, a_s\}$, we have:
+            \[
+              \alpha^2(a_i) = a_{i + 2 \mod s}
+            \]
+            Apply $\alpha^2$ repeatedly, we get:
+            \[
+              \alpha^{2k}(a_i) = a_{i + 2k \mod s}
+            \]
+            Notice that every $a_i$ will eventually return to itself by repeatedly applying $\alpha^2$.
+            That is, $a_i = a_{i + 2k \mod s}$, for some integer $k$.
+            Define the orbit of $a_i$ under $\alpha^2$ as: the set of all elements that can be reached from $a_i$ by applying $\alpha^2$.
+            The orbit length is given by the smallest positive integer $k$ such that:
+            \[
+              2k \equiv 0 \mod s
+            \]
+            This implies that $s$ must divide $2k$, that is, for some integer $m$, $2k = sm$.
+            Let $d = \gcd(2, s)$, thus one can write $2 = d \cdot 2'$ and $s = d \cdot s'$.
+            Therefore,
+            \begin{align*}
+              2k = sm & \iff (d \cdot 2')k = (d \cdot s')m \\
+                      & \iff 2'k = s'm                     \\
+            \end{align*}
+            Since $2'$ and $s'$ are coprime now, the smallest solution for $k$ is $s'$.
+            Therefore,
+            \[
+              k = \frac{s}{d} = \frac{s}{\gcd(2, s)}
+            \]
+            For $\alpha^2$ to be a cycle, the length of the orbit should be $s$. Thus,
+            \[
+              k = s = \frac{s}{\gcd(2, s)} \implies \gcd(2, s) = 1 \implies s \text{ is odd}
+            \]
+      \item \textbf{If $s$ is odd, then $\alpha^2$ is a cycle:}
+            By similar arguments, when $\gcd(2, s) = 1$, the operation $(+2 \mod s)$ generates all positions.
+            So every element cycles through all others, implying $\alpha^2$ is a single cycle.
+    \end{itemize}
+  \end{proof}
+\end{proposition}
+
+
+\begin{proposition}[Exercise B.5]
+  Let $\alpha$ be a cycle of length $s$, say $\alpha = (a_1 a_2 \ldots a_s)$.
+  Prove that if $s$ is odd, then $\alpha$ is the square of some cycle of length $s$.
+  \begin{proof}
+    We will first show that $\alpha = \alpha^{s + 1}$.
+    \[
+      \alpha^{s + 1} = \alpha^s \cdot \alpha = \text{id} \cdot \alpha = \alpha
+    \]
+    Now, we need to find a cycle $\beta$ such that $\beta^2 = \alpha$.
+    I claim that $\beta = \alpha^{\frac{s + 1}{2}}$ works.
+    To verify, we compute:
+    \[
+      \beta^2 = \left(\alpha^{\frac{s + 1}{2}}\right)^2 = \alpha^{\frac{s + 1}{2} \cdot 2} = \alpha^{s + 1} = \alpha
+    \]
+    Now, we need to check that $\beta$ is indeed a cycle of length $s$.
+    We know that if $\alpha$ is a cycle of length $s$, then $\alpha^k$ is a cycle of the same length if and only if $\gcd(k, s) = 1$.
+    Now we need to prove that $\gcd\left(\frac{s + 1}{2}, s\right) = 1$.
+    Since $s$ is odd, we can write $s = 2m  - 1$ for some integer $m$.
+    Then,
+    \[
+      \gcd\left(\frac{s + 1}{2}, s\right) = \gcd\left(\frac{2m}{2}, 2m - 1\right) = \gcd(m, 2m - 1)
+    \]
+    Assume for the sake of contradiction that $d = \gcd(m, 2m - 1) > 1$.
+    Then $d$ divides both $m$ and $2m - 1$, which implies that $d$ divides $2m$.
+    Since $d$ also divides $2m - 1$, it must divide their difference:
+    \[
+      2m - (2m - 1) = 1
+    \]
+    This is a contradiction since $d$ cannot divide 1, since we assumed that $d > 1$.
+    Therefore, we conclude that $\gcd\left(\frac{s + 1}{2}, s\right) = 1$.
+    Hence, $\beta = \alpha^{\frac{s + 1}{2}}$ is a cycle of length $s$.
+    Thus, we have shown that if $s$ is odd, then $\alpha$ is the square of some cycle of length $s$.
+  \end{proof}
+\end{proposition}
+
 
 % -------------------------------------------------------------- %
 %                          Ends here                             %
