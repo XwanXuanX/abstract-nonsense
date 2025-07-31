@@ -1,0 +1,123 @@
+\documentclass[12pt]{article}
+
+\usepackage{setspace}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amsthm,amssymb,amsfonts}
+
+% Create the margins required for class %
+\oddsidemargin=-0.5cm                 	%
+\setlength{\textwidth}{6.5in}         	%
+\addtolength{\voffset}{-20pt}        		%
+\addtolength{\headsep}{25pt}           	%
+
+% Tells LaTeX to allow you to enter information in the heading
+\pagestyle{myheadings}
+\markright{Yetong Li\hfill \today \hfill}
+
+% Use double spacing throughout the document
+% \doublespacing
+
+% Define commonly used sets
+\newcommand{\N}{\mathbb{N}} % Natural numbers
+\newcommand{\Z}{\mathbb{Z}} % Integers
+\newcommand{\R}{\mathbb{R}} % Real numbers
+\newcommand{\Q}{\mathbb{Q}} % Rational numbers
+\newcommand{\C}{\mathbb{C}} % Complex numbers
+
+% Define a bunch of theorem-like environments
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{problem}{Problem}
+\newtheorem{question}{Question}
+\newtheorem{corollary}{Corollary}
+\newtheorem{proposition}{Proposition}
+
+\begin{document}
+
+% -------------------------------------------------------------- %
+%                         Starts here                            %
+% -------------------------------------------------------------- %
+
+\title{Chapter 8: Permutations of A Finite Set}
+\author{Yetong Li \\ A Book of Abstract Algebra}
+
+\maketitle
+
+
+\begin{lemma}
+  For two transpositions, $(xa)$ and $(xb)$, where $a \neq b$,
+  prove that $(xa)(xb) = (xa)(ab)$.
+  \begin{proof}
+    Consider when $z$ is applied to both sides:
+    \begin{align*}
+      (xa)(xb)(z) & = \begin{cases}
+                        z & \text{if } z \neq x, a, b \\
+                        a & \text{if } z = x          \\
+                        b & \text{if } z = a          \\
+                        x & \text{if } z = b
+                      \end{cases} \\
+    \end{align*}
+    On the right-hand side, we have:
+    \begin{align*}
+      (xa)(ab)(z) & = \begin{cases}
+                        z & \text{if } z \neq x, a, b \\
+                        a & \text{if } z = x          \\
+                        b & \text{if } z = a          \\
+                        x & \text{if } z = b
+                      \end{cases} \\
+    \end{align*}
+    Since both sides yield the same result for all $z$, we conclude that:
+    \[
+      (xa)(xb) = (xa)(ab)
+    \]
+  \end{proof}
+\end{lemma}
+
+
+\begin{lemma}
+  Let $\pi \in S_n$. If $\pi$ is a product of $k$ transpositions, then
+  $\pi^{-1}$ is also a product of $k$ transpositions.
+  \begin{proof}
+    We can express $\pi$ as a product of transpositions:
+    \[
+      \pi = (x_1 y_1)(x_2 y_2) \cdots (x_k y_k)
+    \]
+    where each $(x_i y_i)$ is a transposition. The inverse of $\pi$ is given by:
+    \[
+      \pi^{-1} = (x_k y_k)^{-1} \cdots (x_2 y_2)^{-1} (x_1 y_1)^{-1}
+    \]
+    Since the inverse of a transposition is itself, we have:
+    \[
+      \pi^{-1} = (y_k x_k)(y_{k-1} x_{k-1}) \cdots (y_1 x_1)
+    \]
+    This shows that $\pi^{-1}$ is also a product of $k$ transpositions,
+    specifically the same transpositions but in reverse order. Thus, if $\pi$ is a
+    product of $k$ transpositions, then $\pi^{-1}$ is also a product of $k$ transpositions.
+  \end{proof}
+\end{lemma}
+
+
+\begin{lemma}
+  The set of all even permutations in $S_n$ forms a subgroup of $S_n$.
+  \begin{proof}
+    Let $A_n$ denote the set of all even permutations in $S_n$.
+    To show that $A_n$ is a subgroup, we need to show that it is closed under multiplication and inverses.
+    \begin{itemize}
+      \item \textbf{Closure under multiplication:} If $\pi, \sigma \in A_n$,
+            then both $\pi$ and $\sigma$ can be expressed as products of an even number of transpositions.
+            The product $\pi \sigma$ can be expressed as a product of the transpositions of $\pi$ followed by those of $\sigma$.
+            Since the sum of two even numbers is even, $\pi \sigma$ is also a product of an even number of transpositions, hence $\pi \sigma \in A_n$.
+      \item \textbf{Closure under inverses:} If $\pi \in A_n$, then $\pi$ can be expressed as a product of an even number of transpositions.
+            By \textbf{Lemma 2}, the inverse $\pi^{-1}$ is also a product of the same transpositions in reverse order.
+            Since the number of transpositions remains even, $\pi^{-1} \in A_n$.
+    \end{itemize}
+    Since $A_n$ is closed under multiplication and inverses, it is a subgroup of $S_n$.
+  \end{proof}
+\end{lemma}
+
+
+% -------------------------------------------------------------- %
+%                          Ends here                             %
+% -------------------------------------------------------------- %
+
+\end{document}
