@@ -148,6 +148,49 @@
   \end{proof}
 \end{proposition}
 
+
+\begin{lemma}
+  Let $s \in \Z^+$, and $k \in \Z$.
+  Then the sequence $\{0, k, 2k, \ldots, (s - 1)k\} \mod s$ produces all elements of $\Z_s$ if and only if $\gcd(k, s) = 1$.
+  \begin{proof}
+    We will prove both directions of the statement.
+    \begin{itemize}
+      \item \textbf{If $\gcd(k, s) = 1$, then the sequence produces all elements of $\Z_s$:}
+            Let $S = \{0, k, 2k, \ldots, (s - 1)k\} \mod s$.
+            Assume for the sake of contradiction that $S$ does not fully cover $Z_s$.
+            Then this means there are repeats in the sequence, i.e., there exist integers $0 \leq i < j < s$ such that:
+            \[
+              ik \equiv jk \mod s
+            \]
+            This implies:
+            \[
+              (j - i)k \equiv 0 \mod s
+            \]
+            Since $\gcd(k, s) = 1$, then $j - i$ must be a multiple of $s$. Therefore, $j - i = ms$ for some integer $m$, and
+            \[
+              i \equiv j \mod s
+            \]
+            This contradicts the assumption that $i < j$.
+            Hence, the sequence must cover all elements of $\Z_s$.
+      \item \textbf{If the sequence contains all elements of $\Z_s$, then $\gcd(k, s) = 1$:}
+            We proceed by contrapositive.
+            The contrapositive of the statement is:
+            If $\gcd(k, s) > 1$, then the sequence does not produce all elements of $\Z_s$.
+            Assume $\gcd(k, s) = d > 1$.
+            Then we can write $k = dk'$ and $s = ds'$ for some integers $k'$ and $s'$, and $\gcd(k, s) = d$.
+            For $a_i$ in the sequence, we have:
+            \[
+              a_i = ik \mod s = ik' \cdot d \mod ds' = (ik' \mod s') \cdot d
+            \]
+            Therefore, $a_i \equiv 0 \mod d$, meaning that all elements in the sequence are multiples of $d$.
+            Since $d > 1$, the sequence cannot cover all elements of $\Z_s$ because it only produces multiples of $d$.
+            Thus, we conclude that if $\gcd(k, s) > 1$, then the sequence does not produce all elements of $\Z_s$.
+    \end{itemize}
+    Therefore, we have shown that the sequence $\{0, k, 2k, \ldots, (s - 1)k\} \mod s$ produces all elements of $\Z_s$ if and only if $\gcd(k, s) = 1$.
+  \end{proof}
+\end{lemma}
+
+
 \begin{proposition}[Exercise B.4]
   Let $\alpha$ be a cycle of length $s$, say $\alpha = (a_1 a_2 \ldots a_s)$.
   Prove that $\alpha^2$ is a cycle if and only if $s$ is odd.
@@ -188,7 +231,7 @@
               k = s = \frac{s}{\gcd(2, s)} \implies \gcd(2, s) = 1 \implies s \text{ is odd}
             \]
       \item \textbf{If $s$ is odd, then $\alpha^2$ is a cycle:}
-            By similar arguments, when $\gcd(2, s) = 1$, the operation $(+2 \mod s)$ generates all positions.
+            By \textbf{Lemma 4}, since $\gcd(2, s) = 1$, the operation $(+2 \mod s)$ generates all positions in $\Z_s$.
             So every element cycles through all others, implying $\alpha^2$ is a single cycle.
     \end{itemize}
   \end{proof}
@@ -210,8 +253,8 @@
       \beta^2 = \left(\alpha^{\frac{s + 1}{2}}\right)^2 = \alpha^{\frac{s + 1}{2} \cdot 2} = \alpha^{s + 1} = \alpha
     \]
     Now, we need to check that $\beta$ is indeed a cycle of length $s$.
-    We know that if $\alpha$ is a cycle of length $s$, then $\alpha^k$ is a cycle of the same length if and only if $\gcd(k, s) = 1$.
-    Now we need to prove that $\gcd\left(\frac{s + 1}{2}, s\right) = 1$.
+    By \textbf{Lemma 4}, we know that if $\gcd(k, s) = 1$, then $\alpha^k$ is a cycle of length $s$.
+    Therefore, to prove that $\beta$ is a cycle of length $s$, we need to show that $\gcd\left(\frac{s + 1}{2}, s\right) = 1$.
     Since $s$ is odd, we can write $s = 2m  - 1$ for some integer $m$.
     Then,
     \[
@@ -227,6 +270,54 @@
     Therefore, we conclude that $\gcd\left(\frac{s + 1}{2}, s\right) = 1$.
     Hence, $\beta = \alpha^{\frac{s + 1}{2}}$ is a cycle of length $s$.
     Thus, we have shown that if $s$ is odd, then $\alpha$ is the square of some cycle of length $s$.
+  \end{proof}
+\end{proposition}
+
+
+\begin{proposition}[Exercise B.8]
+  Let $\alpha$ be a cycle of length $s$, say $\alpha = (a_1 a_2 \ldots a_s)$.
+  Prove that if $s$ is prime, then every power of $\alpha$ is a cycle.
+  Formally, show that for every $k \in \Z$ such that $1 \leq k < s$, the cycle $\alpha^k$ is a cycle of length $s$.
+  \begin{proof}
+    By \textbf{Lemma 4}, we know that if $\gcd(k, s) = 1$, then $\alpha^k$ is a cycle of length $s$.
+    Since $s$ is prime, the only divisors of $s$ are 1 and $s$ itself.
+    Therefore, for any integer $k$ such that $1 \leq k < s$, we have $\gcd(k, s) = 1$.
+    This means that for every $k$ in the range $1 \leq k < s$, $\alpha^k$ is a cycle of length $s$.
+  \end{proof}
+\end{proposition}
+
+
+\begin{proposition}[Exercise B.6]
+  Let $\alpha$ be a cycle of length $s$, say $\alpha = (a_1 a_2 \ldots a_s)$.
+  Prove that if $s$ is even, say $s = 2t$, then $\alpha^2$ is a product of two cycles of length $t$.
+  \begin{proof}
+    We can express $\alpha$ as:
+    \[
+      \alpha = (a_1 a_2 \ldots a_{2t})
+    \]
+    Since by definition $\alpha(a_i) = a_{i + 1 \mod s}$, so we have:
+    \[
+      \alpha^2(a_i) = a_{i + 2 \mod s} = a_{i + 2 \mod 2t}
+    \]
+    Let's define two subsets of the cycle $\alpha$:
+    \begin{align*}
+      A & = \{a_1, a_3, a_5, \ldots, a_{2t - 1}\} \\
+      B & = \{a_2, a_4, a_6, \ldots, a_{2t}\}
+    \end{align*}
+    Notice that $A$ and $B$ partition the set of elements in $\alpha$.
+    We can easily see that $\alpha^2$ preserves the elements in these subsets, since add $2$
+    to neither the even nor the odd indices will change their parity.
+    Now, we need to show that the orbits of $\alpha^2$ on $A$ and $B$ are cycles of length $t$.
+    For $a_i \in A$, we have:
+    \[
+      \alpha^2(a_1) = a_3, \quad \alpha^2(a_3) = a_5, \quad \ldots, \quad \alpha^2(a_{2t - 1}) = a_1
+    \]
+    This means that applying $\alpha^2$ to $a_i$ will cycle through all elements in $A$, with the orbit as $(a_1a_3\cdots a_{2t-1})$.
+    Similarly, for $a_i \in B$, we have the orbit as $(a_2a_4\cdots a_{2t})$. The two orbits are disjoint cycles of length $t$.
+    Therefore, we can express $\alpha^2$ as a product of two cycles of length $t$:
+    \[
+      \alpha^2 = (a_1 a_3 \ldots a_{2t - 1})(a_2 a_4 \ldots a_{2t})
+    \]
   \end{proof}
 \end{proposition}
 
