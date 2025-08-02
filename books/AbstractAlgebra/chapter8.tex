@@ -322,6 +322,43 @@
 \end{proposition}
 
 
+\begin{proposition}[Exercise D.2]
+  Let $\alpha$ and $\beta$ be disjoint cycles in $S_n$.
+  Prove that if $\alpha\beta = \varepsilon$, then $\alpha = \varepsilon$ and $\beta = \varepsilon$.
+  \begin{proof}
+    Assume for the sake of contradiction that $\alpha \neq \varepsilon$ or $\beta \neq \varepsilon$.
+    Then we have 3 cases:
+    \begin{itemize}
+      \item \textbf{Case 1:} $\alpha \neq \varepsilon$ and $\beta = \varepsilon$.
+            In this case, we have $\alpha\beta = \alpha \neq \varepsilon$, which contradicts the assumption that $\alpha\beta = \varepsilon$.
+      \item \textbf{Case 2:} $\alpha = \varepsilon$ and $\beta \neq \varepsilon$.
+            In this case, we have $\alpha\beta = \beta \neq \varepsilon$, which again contradicts the assumption that $\alpha\beta = \varepsilon$.
+      \item \textbf{Case 3:} $\alpha \neq \varepsilon$ and $\beta \neq \varepsilon$.
+            Since $\alpha$ and $\beta$ are disjoint cycles, they do not share any elements.
+            Therefore, $\alpha\beta$ will not affect any elements in $\alpha$ or $\beta$.
+            This means that $\alpha\beta$ will not return to the identity permutation,
+            which contradicts the assumption that $\alpha\beta = \varepsilon$.
+    \end{itemize}
+    Since all cases lead to contradictions, we conclude that the only possibility is that both $\alpha$ and $\beta$ must be the identity permutation.
+    Therefore, we have shown that if $\alpha\beta = \varepsilon$ for disjoint cycles $\alpha$ and $\beta$, then $\alpha = \varepsilon$ and $\beta = \varepsilon$.
+  \end{proof}
+\end{proposition}
+
+
+\begin{proposition}
+  Let $\alpha$ and $\beta$ be disjoint cycles in $S_n$.
+  Prove that if $(\alpha\beta)^t = \varepsilon$, where $t$ is a positive integer,
+  then $\alpha^t = \varepsilon$ and $\beta^t = \varepsilon$.
+  \begin{proof}
+    Since $\alpha$ and $\beta$ are disjoint cycles, $(\alpha\beta)^t = \alpha^t \beta^t = \varepsilon$.
+    From \textbf{Proposition 6}, we know that if two disjoint cycles multiply to the identity permutation,
+    then each cycle must also be the identity permutation.
+    Since $\alpha$ and $\beta$ are disjoint cycles, it's obvious that $\alpha^t$ and $\beta^t$ must also be disjoint cycles.
+    Therefore, we can conclude that if $(\alpha\beta)^t = \varepsilon$, then both $\alpha^t = \varepsilon$ and $\beta^t = \varepsilon$.
+  \end{proof}
+\end{proposition}
+
+
 % -------------------------------------------------------------- %
 %                          Ends here                             %
 % -------------------------------------------------------------- %
