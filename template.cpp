@@ -30,13 +30,13 @@ template <typename T> void remDup(V<T>& v) {sort(all(v));v.erase(unique(all(v)),
 // #define double   long double
 
 void solve() {
-    
+  
 }
 
 signed main() {
-    ios_base::sync_with_stdio(0);
-    cin.tie(0), cout.tie(0);
-    int tt = 1;
-    read(tt);
-    rep(tt) solve();
+  ios_base::sync_with_stdio(0);
+  cin.tie(0), cout.tie(0);
+  int tt = 1;
+  read(tt);
+  rep(tt) solve();
 }
