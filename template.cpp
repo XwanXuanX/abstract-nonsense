@@ -3,12 +3,10 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#define all(x)                          x.begin(), x.end()
 #define rep(x)                          for (int _ = (0); _ < (x); ++_)
 template <typename T> using V           = vector<T>;
-template <typename T> using pr          = pair<T, T>;
-template <typename T> using minPq       = priority_queue<T, V<T>, greater<T>>;
-template <typename T> using maxPq       = priority_queue<T, V<T>, less<T>>;
+template <typename T> using MinPQ       = priority_queue<T, V<T>, greater<T>>;
+template <typename T> using MaxPQ       = priority_queue<T, V<T>, less<T>>;
 
 template <typename T, typename = void> struct DefaultI : std::false_type {}; template <typename T> struct DefaultI<T, std::void_t<decltype(std::cin  >> std::declval<T&>())>> : std::true_type {};
 template <typename T, typename = void> struct DefaultO : std::false_type {}; template <typename T> struct DefaultO<T, std::void_t<decltype(std::cout << std::declval<T&>())>> : std::true_type {};
