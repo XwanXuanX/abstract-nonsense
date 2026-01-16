@@ -1,3 +1,49 @@
+# How to Tackle a Problem?
+
+In this section I will breifly describe some techniques and thought-processes I learned through practices. In my opinion, being clever and creative in problem solving strategies is the hardest skill to pick up (definitely harder than learning any well-known algorithms or data structures). And, to be frank, learning all kinds of algorithms and data structures **ALONE** is just useless. This has to do with the problem-solving mindset that you should have when you are solving a problem, which we will discuss first.
+
+## Problem-solving mindset
+
+When you are given a problem to solve, how should you think?
+
+## Problem-solving strategies
+
+In this section, I will discuss some high-level problem-solving strategies that we should always be aware of. Each problem (excluding adhoc ones) must have a major "theme" so that they can be pattern-matched and classified. Once the "theme" of the problem is correctly identified, the rest almost always follows naturally.
+
+> **Important Note 1:** It is crucial to understand the distinction between problem-solving strategies and implementation details. Problem-solving strategies are all about identifying theme(s), decomposing into subproblems, and verifying correctness. On the contrary, implementation cares about transforming your strategy into efficient algorithms that doesn't TLE (note that `DFS` and `BFS` is absent from the list below). For example, when someone said that they solved a problem using post-order `DFS`, they are talking about implementation details. At a higher level, it is likely that they've noticed that the problem can be broken down into subproblems and used the `Divide and Conquer` approach to solve it. By now, I believe you already know what we are discussing here.
+
+> **Important Note 2:** A problem-solving strategy is not limited to solve one type of problems (duh). For example, people may think the section `Graph` only applies to problems that explicitly contains the word "graph" or "tree". This is a huge misconception, and, as a matter of fact, the topics of `Graph` show up *much* *much* more often than you think, in *many* different forms. You'll be amazed by this.
+
+> **Important Note 3:** In simpler problems, it generally involves only 1 of those strategies. However, in harder problems, one often needs to employ multiple strategies at different stages to construct a working solution. The complexity of a problem generally shows in 2 dimensions: 1. the combination of different strategies; 2. the difficulty in identifying or using one particular strategy.
+
+> **Less Important Note:** Graph-problems can be solved in non-`Graph` ways, while problems that seems unrelated to graphs can only be solved using their equivalent graph-based formalization. Graph is the most powerful data structure of all time. It is very well researched, and there exists all kinds of well-known algorithms that are designed to solve all kinds of problems! Feeling stuck? Try translating to graph! It's like solving linear PDEs in time domain is hard, but doing so in frequency domain is a breeze. So, in conclusion, `Graph == Fourier Transform`?
+
+> **Another Less Important Note:** I love graphs because they are black magic! 😍
+
+### Reduction
+
+### Well-known Pattern(s)
+
+### Enumeration
+
+### Data Structures
+
+### Divide and Conquer
+
+### Greedy
+Greedy is all about vibes. Yes, you heard me correct, it's all about vibes.
+
+### DP
+
+### Sorting
+
+### Binary Search
+
+### Graph
+
+### Adhoc
+Oops, bad luck, no help for you buddy 🤣
+
 # Algorithm Collection
 
 * [Primes generating algorithms: Trial Division, Sieve of Eratosthenes, Dijkstra's Approach](https://www.youtube.com/watch?v=fwxjMKBMR7s)
