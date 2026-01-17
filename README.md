@@ -4,7 +4,7 @@ In this section I will breifly describe some techniques and thought-processes I 
 
 ## Problem-solving mindset
 
-When you are given a problem to solve, how should you think?
+When you are given a problem, how should you approach it?
 
 ## Problem-solving strategies
 
@@ -25,6 +25,57 @@ In this section, I will discuss some high-level problem-solving strategies that 
 ### Well-known Pattern(s)
 
 ### Enumeration
+Enumeration problems are almost always the easiest to be identified due to its suspiciously small constraints. For example, to enumerate all possible permutations of $n$ elements, you need $\mathcal{O}(n!)$ time complexity; and to enumerate all possible ways of selecting some (possibly none) items from a set with $n$ elements, you need $\mathcal{O}(2^n)$ time complexity (via `bitmasking` or `backtracking`).
+
+
+
+Some common implementation techniques for enumeration problems:
+* `Brute-force`: 
+* `Backtracking`:
+
+* `Bitmasking`: Very powerful technique. Used in many problems. The easiest version is used to solve any problems that can be reduced to "finding all possible ways of selecting $0 \le x \le n$ items from a set with cardinality of $n \le 20$". For instance, the combination problem and the binary partitioning problem. Bitmasking takes the advantage of the nature of binary numbers:
+  ```cpp
+  for (int mask = 0; mask < (1 << n); ++mask) {
+    for (int i = 0; i < n; ++i) {
+      if (mask & (1 << i))
+        // element i is chosen
+    }
+  }
+  ```
+  This yields a time complexity of $\mathcal{O}(n \cdot 2^n)$.
+
+  There are other use cases of `Bitmasking`. For example, the "gray code enumeration":
+  ```cpp
+  for (int i = 0; i < (1 << n); ++i) {
+    const int mask = i ^ (i >> 1);  // Gray code
+  }
+  ```
+  Or, "submask generation" (a submask of `mask` is any mask whose set bits are a subset of the set bits of `mask`):
+  ```cpp
+  for (int sub = mask; sub; sub = (sub - 1) & mask) {
+    // sub is a non-empty submask of mask
+  }
+  ```
+  Submask enumeration is important because it lets you efficiently iterate over all subsets of a given state in $\mathcal{O}(2^k)$ time instead of $\mathcal{O}(2^n)$. This is a huge win especially when $k << n$.
+
+  > **Note 1:** The above description might give you an illusion that `Bitmasking` can only be used to solve selection problems where results are "binary". While this is true for naive `Bitmasking`, we can easily take the idea and generalize it to "n-ary". The pattern is called "n-ary enumeration using precomputed powers":
+  >  ```cpp
+  >  const int n;   // number of items
+  >  const int k;   // number of choices per item
+  >  vector<long long> powk(n + 1);
+  >  for (int i = 1; i <= n; ++i) powk[i] = powk[i - 1] * k;
+  >  for (long long state = 0; state < powk[n]; ++state) {
+  >    for (int i = 0; i < n; ++i) {
+  >      const int choice = (state / powk[i]) % k;
+  >      // item i goes to bucket = choice
+  >    } 
+  >  }
+  >  ```
+  > This yields a time complexity of $\mathcal{O}(n \cdot k^n)$. Do you notice the similarities between this version and the "binary" version?
+
+  > **Note 2:** Bitmasking is not only used in enumeration types of problems - it can be used in `DP` types of problems as well! The most well-known technique is called `Bitmask DP`, where you iterate through all possible subset of a set, with cardinality from small to large. This is one example of state compression in `DP`. Bitmasking is used to generate all subsets.
+
+* `std::next_permutation`: If you have $n \le 10$ elements and clearly their order matters, then why not trying all permutations?
 
 ### Data Structures
 
