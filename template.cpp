@@ -2,6 +2,7 @@
 #pragma GCC target("avx2,popcnt,lzcnt,abm,bmi,bmi2,fma")
 #include <bits/stdc++.h>
 using namespace std;
+
 inline namespace FastIO {
 template <typename T, typename = void> struct DefaultI : std::false_type {}; template <typename T> struct DefaultI<T, std::void_t<decltype(std::cin  >> std::declval<T&>())>> : std::true_type {};
 template <typename T, typename = void> struct DefaultO : std::false_type {}; template <typename T> struct DefaultO<T, std::void_t<decltype(std::cout << std::declval<T&>())>> : std::true_type {};
@@ -23,6 +24,7 @@ template <typename T, typename... Ts> void ps(const string& s, T& t, Ts& ...ts) 
 template <typename... Ts> void print(const Ts& ...ts) { FastIO::ps(" ", ts...); }
 template <typename... Ts> void read (Ts& ...ts) { ((FastIO::re(ts)), ...); }
 }  // namespace FastIO
+
 inline namespace Util {
 #define rep(x)                     for (int _ = (0); _ < (x); ++_)
 template <typename T> using V    = vector<T>;
