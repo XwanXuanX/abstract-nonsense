@@ -1,11 +1,9 @@
 #pragma GCC optimize("Ofast,unroll-loops")
-#pragma GCC target("avx2,popcnt,lzcnt,abm,bmi,bmi2,fma")
 #include <bits/stdc++.h>
 using namespace std;
 
 inline namespace FastIO {
-#define SFINAE(x, ...) template <class, class = void> struct x : std::false_type {}; \
-                       template <class T> struct x<T, std::void_t<__VA_ARGS__>> : std::true_type {}
+#define SFINAE(x, ...) template <class, class = void> struct x : std::false_type {}; template <class T> struct x<T, std::void_t<__VA_ARGS__>> : std::true_type {}
 SFINAE(DefaultI, decltype(std::cin >> std::declval<T &>())); SFINAE(DefaultO, decltype(std::cout << std::declval<T &>())); SFINAE(IsTuples, typename std::tuple_size<T>::type); SFINAE(Iterable, decltype(std::begin(std::declval<T>())));
 template <typename T> char sp(T& t) { return (Iterable<T>::value || IsTuples<T>::value) ? '\n' : ' '; }
 template <typename T> void re(T& t) { if constexpr (DefaultI<T>::value) { cin >> t; } else if constexpr (Iterable<T>::value) { for (auto& x : t) re(x); } else if constexpr (IsTuples<T>::value) { std::apply([&](auto& ...args) { (re(args), ...); }, t); } }
