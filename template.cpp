@@ -15,7 +15,9 @@ template <typename... Ts> void read(Ts& ...ts) { ((FastIO::re(ts)), ...); }
 }  // namespace FastIO
 
 inline namespace Util {
+#define int                        long long
 #define rep(x)                     for (int _ = (0); _ < (x); ++_)
+constexpr int INF                = (1ll << 60);
 template <typename T> using V    = vector<T>;
 template <typename T> using MnPQ = priority_queue<T, V<T>, greater<T>>;
 template <typename T> using MxPQ = priority_queue<T, V<T>, less<T>>;
