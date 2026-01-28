@@ -15,13 +15,25 @@ template <typename... Ts> void read(Ts& ...ts) { ((FastIO::re(ts)), ...); }
 }  // namespace FastIO
 
 inline namespace Util {
-#define int                        long long
-#define double                     long double
-#define rep(x)                     for (int _ = (0); _ < (x); ++_)
-constexpr int INF                = (1ll << 60);
+#define int     long long
+#define double  long double
+#define pb      push_back
+#define sz(x)   (int)((x).size())
+#define rep(x)  for (int _ = (0); _ < (x); ++_)
+#define all(x)  (x).begin(), (x).end()
+#define rall(x) (x).rbegin(), (x).rend()
+
+constexpr int INF    = 1ll << 60;
+constexpr int MOD    = 1'000'000'007; // 998'244'353;
+constexpr double EPS = 1e-12L;
+constexpr double PI  = 3.141592653589793238462643383279502884L;
+constexpr array<int, 4> dx = {1, 0, -1, 0}, dy = {0, 1, 0, -1};
+
 template <typename T> using V    = vector<T>;
 template <typename T> using MnPQ = priority_queue<T, V<T>, greater<T>>;
 template <typename T> using MxPQ = priority_queue<T, V<T>, less<T>>;
+template <typename T> bool chmin(T& a, const T& b) { if (b < a) { a = b; return true; } return false; }
+template <typename T> bool chmax(T& a, const T& b) { if (b > a) { a = b; return true; } return false; }
 }  // namespace Util
 
 #ifndef ONLINE_JUDGE
