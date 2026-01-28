@@ -16,6 +16,7 @@ template <typename... Ts> void read(Ts& ...ts) { ((FastIO::re(ts)), ...); }
 
 inline namespace Util {
 #define int                        long long
+#define double                     long double
 #define rep(x)                     for (int _ = (0); _ < (x); ++_)
 constexpr int INF                = (1ll << 60);
 template <typename T> using V    = vector<T>;
