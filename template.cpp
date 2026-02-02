@@ -1,15 +1,19 @@
-#pragma GCC optimize("Ofast,unroll-loops")
+#if defined(__GNUC__) && !defined(__clang__)
+    #pragma GCC optimize("Ofast,unroll-loops")
+    #pragma GCC target("avx2,popcnt,lzcnt,abm,bmi,bmi2,fma")
+#endif
 #include <bits/stdc++.h>
 using namespace std;
 
 #define int long long
-#define double long double
-constexpr int INF = 1ll<<60;
-constexpr int MOD = 1000000007; // 998244353;
-template<typename T> using MaxPQ = priority_queue<T,vector<T>,less<T>>;
-template<typename T> using MinPQ = priority_queue<T,vector<T>,greater<T>>;
-template<typename T> bool chmin(T& a,const T& b) {if(b<a){a=b;return true;}return false;}
-template<typename T> bool chmax(T& a,const T& b) {if(b>a){a=b;return true;}return false;}
+#define INF (1ll<<60)
+
+#ifndef ONLINE_JUDGE
+    #include "debug.hpp"
+    #define debug(...) do { __VA_ARGS__ } while (0)
+#else
+    #define debug(...) do {} while (0)
+#endif
 
 void solve() {
     
