@@ -143,7 +143,7 @@ theorem BinaryTree.swapped_size [DecidableEq α] (t : BinaryTree α) : size (swa
   induction t with
   | leaf => simp [swap, size]
   | node l v r ih_l ih_r =>
-    simp [swap, size, ih_l, ih_r]
+    simp [swap, size]
     rw [Nat.add_assoc, Nat.add_assoc, Nat.add_comm (size l) (size r)]
 
 -- 13. There exists a tree of size n for every natural number n.
@@ -375,13 +375,14 @@ theorem BinaryTree.inorder_visits_all_nodes [DecidableEq α] (x : α)
     induction t with
     | leaf => contradiction
     | node ltree v rtree ihl ihr =>
-      simp_all [contains, inorder]
+      simp only [contains] at h
+      simp only [inorder, Finset.mem_union, Finset.mem_singleton]
       rcases h with ha | hb | hc
-      · right; left
+      · left; right
         exact ha
-      · left
+      · left; left
         exact ihl hb
-      · right; right
+      · right
         exact ihr hc
 
   -- Prove the reverse direction
@@ -390,14 +391,13 @@ theorem BinaryTree.inorder_visits_all_nodes [DecidableEq α] (x : α)
     induction t with
     | leaf => contradiction
     | node ltree v rtree ihl ihr =>
-      simp_all [contains, inorder]
-      rcases h with ha | hb | hc
-      · right; left
-        exact ihl ha
-      · left
-        exact hb
-      · right; right
-        exact ihr hc
+      show x = v ∨ contains x ltree ∨ contains x rtree
+      have h : x ∈ inorder ltree ∪ {v} ∪ inorder rtree := h
+      rcases Finset.mem_union.mp h with hmem | hc
+      · rcases Finset.mem_union.mp hmem with ha | hb
+        · right; left; exact ihl ha
+        · left; exact Finset.mem_singleton.mp hb
+      · right; right; exact ihr hc
 
 -- Prove that inorder traversal has a tight bound of O(n)
 theorem BinaryTree.inorder_time_bound [DecidableEq α] (t : BinaryTree α) :
@@ -407,14 +407,14 @@ theorem BinaryTree.inorder_time_bound [DecidableEq α] (t : BinaryTree α) :
     exact Nat.add_le_add h1 h2
   constructor
   · -- Prove the lower bound
-    simp [inorder_time, size]
+    simp
     induction t with
     | leaf => simp [inorder_time, size]
     | node ltree v rtree ihl ihr =>
       simp [inorder_time, size, Nat.add_assoc]
       exact claim1 ltree.size ltree.inorder_time rtree.size rtree.inorder_time ihl ihr
   · -- Prove the upper bound
-    simp [inorder_time, size]
+    simp
     induction t with
     | leaf => simp [inorder_time, size]
     | node ltree v rtree ihl ihr =>
@@ -529,7 +529,7 @@ by
     by
       unfold search_path.search at h1
       unfold follow_path;
-      simp_all [h]
+      simp_all
 
     have claim2 (hc1 : v ≠ val) (hc2 : contains' v ltree = true)
       : ∃ q, p = p₀ ++ q ∧ (ltree.node val rtree).follow_path q = some v :=
@@ -592,11 +592,11 @@ lemma BinaryTree.path_valid [DecidableEq α] (t : BinaryTree α) (v : α) (h : c
         unfold search_path.search at h1
         unfold search_path.search
         by_cases hcase1 : v = val
-        · simp_all [hcase1]
+        · simp_all
         · push_neg at hcase1
           by_cases hcase2 : contains' v ltree = true
-          · simp_all [hcase1.symm, hcase2]
-          · simp_all [hcase1.symm, hcase2]
+          · simp_all [hcase1.symm]
+          · simp_all [hcase1.symm]
 
     rcases h with ha | hb | hc
     · unfold search_path.search; simp [ha]
@@ -707,9 +707,9 @@ by
     | leaf => contradiction
     | node lt vt rt ihl ihr =>
       by_cases hcase1 : v = vt
-      · simp_all [search_path.search, hcase1]
+      · simp_all [search_path.search]
       · push_neg at hcase1
-        by_cases hcase2 : contains' v lt = true <;> simp_all [search_path.search, hcase1.symm, hcase2]
+        by_cases hcase2 : contains' v lt = true <;> simp_all [search_path.search, hcase1.symm]
 
 /-
 It's not easy to see that `d` can only be `left` for all three hypothesis to hold.
@@ -864,7 +864,7 @@ by
     unfold ppath at hpath
     have claim1 := search_path_correct t v [] path hpath ((contains'_iff_contains v t).mpr h)
     obtain ⟨path, claim1, claim2⟩ := claim1
-    simp_all [claim1]
+    simp_all
 
   constructor
   show t.follow_path path = some v
@@ -910,7 +910,7 @@ by
         -- Analyze the structure of the input paths
         cases path <;> cases y
         case nil.nil => rfl
-        case nil.cons | cons.nil | cons.cons => simp_all [ha, hclaim]
+        case nil.cons | cons.nil | cons.cons => simp_all
 
       /- ------------------------------------------------------------------- -/
       · -- Case when v ∈ left subtree
@@ -919,7 +919,7 @@ by
         obtain ihl := ihl h_subtree_unique.left hb
 
         have claim1 (p : Path) (hp : p = []) (h : (ltree.node val rtree).follow_path p = some v)
-          : False := by simp_all [follow_path, hp]
+          : False := by simp_all [follow_path]
 
         have claim2 {p : Path} (h : (ltree.node val rtree).follow_path (Dir.left :: p) = some v)
           : ltree.follow_path p = some v := by simp_all [follow_path]
@@ -931,7 +931,7 @@ by
           contradiction
 
         cases path <;> cases y
-        case nil.nil | nil.cons | cons.nil => simp_all [claim1]
+        case nil.nil | nil.cons | cons.nil => simp_all
         case cons.cons =>
           rename_i d path' d' y'
           obtain ihl := ihl path' (search_go_left hpath hunq hb)
@@ -951,7 +951,7 @@ by
         obtain ihr := ihr h_subtree_unique.right hc
 
         have claim1 (p : Path) (hp : p = []) (h : (ltree.node val rtree).follow_path p = some v)
-          : False := by simp_all [follow_path, hp]
+          : False := by simp_all [follow_path]
 
         have claim2 {p : Path} (h : (ltree.node val rtree).follow_path (Dir.right :: p) = some v)
           : rtree.follow_path p = some v := by simp_all [follow_path]
@@ -963,7 +963,7 @@ by
           contradiction
 
         cases path <;> cases y
-        case nil.nil | nil.cons | cons.nil => simp_all [claim1]
+        case nil.nil | nil.cons | cons.nil => simp_all
         case cons.cons =>
           rename_i d path' d' y'
           obtain ihr := ihr path' (search_go_right hpath hunq hc)
