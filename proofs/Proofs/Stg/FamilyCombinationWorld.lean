@@ -127,7 +127,20 @@ section Toys
 
   example (F G : Set (Set U))
     (h1 : ⋃₀ (F ∩ Gᶜ) ⊆ (⋃₀ F) ∩ (⋃₀ G)ᶜ) : (⋃₀ F) ∩ (⋃₀ G) ⊆ ⋃₀ (F ∩ G) := by
-    sorry
+    intro x h2
+    rw [mem_inter_iff] at h2
+    obtain ⟨h2, h3⟩ := h2
+    rw [mem_sUnion] at h2
+    obtain ⟨t, h4, h5⟩ := h2
+    rw [mem_sUnion]
+    by_cases ht : t ∈ G
+    · exact ⟨t, ⟨h4, ht⟩, h5⟩
+    · exfalso
+      have h6 : t ∈ F ∩ Gᶜ := ⟨h4, ht⟩
+      have h7 : x ∈ ⋃₀ (F ∩ Gᶜ) := mem_sUnion.mpr ⟨t, h6, h5⟩
+      have h8 := h1 h7
+      rw [mem_inter_iff, mem_compl_iff] at h8
+      exact h8.2 h3
 
 end Toys
 
