@@ -1,7 +1,3 @@
-#if defined(__GNUC__) && !defined(__clang__)
-    #pragma GCC optimize("Ofast,unroll-loops")
-    #pragma GCC target("avx2,popcnt,lzcnt,abm,bmi,bmi2,fma")
-#endif
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -21,7 +17,7 @@ void solve() {
 
 signed main() {
     ios_base::sync_with_stdio(0);
-    cin.tie(0),cout.tie(0),cin.exceptions(cin.failbit);
+    cin.tie(0),cout.tie(0);
     int T=1; cin>>T;
     while(T--) solve();
 }
