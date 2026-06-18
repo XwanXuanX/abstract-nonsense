@@ -1,5 +1,5 @@
 CompileFlags:
   Add:
     - -std=c++23
-    - -I/Users/yetong_li/Documents/MATH/abstract-nonsense
+    - -I/home/wanxuan/abstract-nonsense
     - -Wno-unknown-pragmas
