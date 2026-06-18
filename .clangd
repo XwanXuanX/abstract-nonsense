@@ -3,3 +3,6 @@ CompileFlags:
     - -std=c++23
     - -I/home/wanxuan/abstract-nonsense
     - -Wno-unknown-pragmas
+
+InlayHints:
+  Enabled: No
