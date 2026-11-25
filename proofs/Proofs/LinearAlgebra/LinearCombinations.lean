@@ -1,5 +1,6 @@
 import Mathlib.Algebra.Module.Prod
 import Mathlib.Data.Real.Basic
+import Mathlib.LinearAlgebra.Span.Defs
 import Mathlib.Tactic.Ring
 
 namespace Proofs.LinearAlgebra
@@ -23,5 +24,23 @@ theorem collinear_vectors_cannot_generate_unit_x :
   change a * 1 + b * 2 = 1 at hx
   change a * 1 + b * 2 = 0 at hy
   exact one_ne_zero (hx.symm.trans hy)
+
+/-- A scalar multiple of the first vector adds nothing to the span of the pair. -/
+theorem span_pair_eq_span_singleton_of_smul
+    (u v : ℝ × ℝ) (k : ℝ) (hv : v = k • u) :
+    Submodule.span ℝ ({u, v} : Set (ℝ × ℝ)) =
+      Submodule.span ℝ ({u} : Set (ℝ × ℝ)) := by
+  apply le_antisymm
+  · intro w hw
+    obtain ⟨a, b, hab⟩ := Submodule.mem_span_pair.mp hw
+    refine Submodule.mem_span_singleton.mpr ⟨a + k * b, ?_⟩
+    calc
+      (a + k * b) • u = a • u + (k * b) • u := by rw [add_smul]
+      _ = a • u + b • v := by rw [hv, smul_smul, mul_comm b k]
+      _ = w := hab
+  · intro w hw
+    obtain ⟨c, hc⟩ := Submodule.mem_span_singleton.mp hw
+    refine Submodule.mem_span_pair.mpr ⟨c, 0, ?_⟩
+    simpa only [zero_smul, add_zero] using hc
 
 end Proofs.LinearAlgebra
